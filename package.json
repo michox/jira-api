@@ -1,0 +1,38 @@
+{
+  "name": "jira-api",
+  "version": "1.0.0",
+  "description": "A library to provide Typescript interfaces for the Jira API and the React Framework. Currently only supports Connect Modules but Forge API could be enabled in the future. This is a total work in progress without documentation and primarily here for personal use! However, contributions are welcome.",
+  "main": "./dist/index.js",
+  "browser": {
+    "./dist/index.js": "./dist.browser/index.js",
+    "./dist/JiraApi.js": "./dist/JiraApi.browser.js",
+    "request": false,
+    "request-promise-native": false
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && tsc -p tsconfig.browser.json"
+  },
+  "keywords": [
+    "jira"
+  ],
+  "author": "michox",
+  "license": "ISC",
+  "types": "index.d.ts",
+  "files": [
+    "dist",
+    "dist.browser"
+  ],
+  "dependencies": {
+    "@atlaskit/adf-utils": "^16.0.0",
+    "@atlaskit/panel": "^0.4.7",
+    "@atlaskit/section-message": "^6.1.8",
+    "react-query": "^3.34.16",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.9"
+  },
+  "devDependencies": {
+    "@types/request": "^2.48.8",
+    "@types/request-promise-native": "^1.0.18"
+  }
+}
