@@ -1,4 +1,4 @@
-import JiraCrudType from "./JiraCrudType";
+import {JiraCrudType} from "./JiraCrudType";
 
 interface CustomerNotificationRequest {
   configurationData: {
@@ -25,7 +25,7 @@ enum notificationId {
   "Customer-visible status changed",
 }
 
-export default class CustomerNotification extends JiraCrudType<CustomerNotificationRequest> {
+export class CustomerNotification extends JiraCrudType<CustomerNotificationRequest> {
   constructor() {
     super("/rest/servicedesk/notifications/1/rule");
   }

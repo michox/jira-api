@@ -1,6 +1,6 @@
 import { PageBean } from "./CrudType";
-import JiraApi from "./JiraApi";
-import JiraType from "./JiraCrudType";
+import {JiraApi} from "./JiraApi";
+import {JiraCrudType} from "./JiraCrudType";
 
 export interface CustomFieldOptionsCreateRequest {
   options: {
@@ -31,7 +31,7 @@ export type CustomFieldOptionsReorderRequest =
       after: string; //id of the option to place the moved options after
     };
 
-export class CustomFieldOption extends JiraType<CustomFieldOptionsDetails, CustomFieldOptionsCreateRequest> {
+export class CustomFieldOption extends JiraCrudType<CustomFieldOptionsDetails, CustomFieldOptionsCreateRequest> {
   constructor(fieldId: string, appContextId: string) {
     super(`/rest/api/3/field/${fieldId}/context/${appContextId}/option`);
   }

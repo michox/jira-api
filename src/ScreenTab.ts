@@ -1,5 +1,5 @@
-import JiraApi from "./JiraApi";
-import JiraType from "./JiraCrudType";
+import { JiraApi } from "./JiraApi";
+import { JiraCrudType } from "./JiraCrudType";
 import { ScreenTabField, ScreenTabFieldDetails } from "./ScreenTabField";
 
 export interface ScreenTabCreateRequest {
@@ -13,7 +13,7 @@ export interface ScreenTabDetails extends ScreenTabCreateRequest {
   fields: Array<ScreenTabField>;
 }
 
-export default class ScreenTab extends JiraType<ScreenTabDetails, ScreenTabCreateRequest> {
+export class ScreenTab extends JiraCrudType<ScreenTabDetails, ScreenTabCreateRequest> {
   constructor(screenId: string | number) {
     super(`/rest/api/3/screens/${screenId}/tabs`);
     this.body.screenId = screenId;
@@ -99,8 +99,7 @@ export default class ScreenTab extends JiraType<ScreenTabDetails, ScreenTabCreat
     let fieldsNotToTouch: string[] = [];
     let correctFieldCount = 0; //each time we delete a field we need to adjust for the change in index
 
-    
-    for (const [fieldIndex, fieldId] of fieldIds.entries()){   
+    for (const [fieldIndex, fieldId] of fieldIds.entries()) {
       existingFields.find((existingField, existingFieldIndex) => {
         if (existingField.id === fieldId) {
           fieldsNotToTouch.push(fieldId);

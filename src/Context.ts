@@ -1,4 +1,4 @@
-import JiraType from "./JiraCrudType";
+import {JiraCrudType} from "./JiraCrudType";
 
 export interface ContextCreateRequest {
   name: string;
@@ -7,7 +7,7 @@ export interface ContextCreateRequest {
   description?: string;
 }
 
-export default class Context extends JiraType {
+export class Context extends JiraCrudType {
   constructor(fieldId: number) {
     super(`/rest/api/3/field/${fieldId}/context`);
   }

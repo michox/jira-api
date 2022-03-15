@@ -1,8 +1,8 @@
-import JiraType from "./JiraCrudType";
-import JiraApi from "./JiraApi";
-import { CrudState, PageBean } from "./CrudType";
+import { JiraCrudType } from "./JiraCrudType";
+import { JiraApi } from "./JiraApi";
+import { PageBean } from "./CrudType";
 
-export interface Status {
+export interface WorkflowStatus {
   id: string | number;
   name?: string;
   properties?: any;
@@ -118,7 +118,7 @@ interface TransitionProperties {
 
 export interface WorkflowCreateRequest {
   name: string;
-  statuses: Status[];
+  statuses: WorkflowStatus[];
   transitions: TransitionProperties[];
   description?: string;
 }
@@ -127,7 +127,7 @@ interface WorkflowDetails {
   id: WorkflowId;
   description?: string;
   transitions?: TransitionProperties[];
-  statuses: Status[];
+  statuses: WorkflowStatus[];
   isDefault?: boolean;
   schemes?: { id: string; name: string }[];
   created?: string;
@@ -144,7 +144,7 @@ type WorkflowId =
       entityId: string;
     };
 
-export default class Workflow extends JiraType<WorkflowDetails, WorkflowCreateRequest> {
+export class Workflow extends JiraCrudType<WorkflowDetails, WorkflowCreateRequest> {
   constructor() {
     super("/rest/api/3/workflow");
   }
@@ -179,7 +179,6 @@ export default class Workflow extends JiraType<WorkflowDetails, WorkflowCreateRe
       allWorkflows = await getWorkflowPage(allWorkflows.maxResults + allWorkflows.startAt);
       workflow = filterWorkflow();
     }
-
 
     return workflow;
 
@@ -223,7 +222,8 @@ export default class Workflow extends JiraType<WorkflowDetails, WorkflowCreateRe
     }
     if (!this.body.id.entityId) {
       console.debug(
-        "can't delete the workflow because retrieving of the entity id failed. Check if you have the right name configured", JSON.stringify(this.body.id)
+        "can't delete the workflow because retrieving of the entity id failed. Check if you have the right name configured",
+        JSON.stringify(this.body.id)
       );
       return this;
     }

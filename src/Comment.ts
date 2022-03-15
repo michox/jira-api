@@ -1,12 +1,12 @@
-import JiraType from "./JiraCrudType";
+import {JiraCrudType} from "./JiraCrudType";
 
-interface CreateCommentRequest {
+export interface CreateCommentRequest {
   body: any;
   visibility?: { type: "group" | "role"; value: string };
   properties?: { key: string; value: any }[];
 }
 
-export default class Comment extends JiraType {
+export class Comment extends JiraCrudType {
   constructor(issueIdOrKey: string) {
     super(`/rest/api/3/issue/${issueIdOrKey}/comment`);
   }

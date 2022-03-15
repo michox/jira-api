@@ -1,5 +1,6 @@
-import JiraType from "./JiraCrudType";
-import JiraApi, { encodeObject } from "./JiraApi";
+import { JiraCrudType } from "./JiraCrudType";
+import { JiraApi } from "./JiraApi";
+import { encodeObject } from "JiraApiTypes";
 
 interface UserSearchResult {
   self: string;
@@ -36,7 +37,7 @@ interface UserPickerResult {
   avatarUrl: string;
 }
 
-export default class User extends JiraType {
+export class User extends JiraCrudType {
   constructor() {
     super("/rest/api/3/user");
   }

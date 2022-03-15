@@ -1,12 +1,12 @@
-import JiraApi from "./JiraApi";
-import JiraType from "./JiraCrudType";
+import {JiraApi} from "./JiraApi";
+import {JiraCrudType} from "./JiraCrudType";
 declare var addonKey: string; //available via the react-layout.hbs in the views folder
 
-class ConnectAppProperty<
+export class ConnectAppProperty<
   P extends Record<string, any>,
-  D extends Record<string, JiraType> | JiraType | unknown = unknown
+  D extends Record<string, JiraCrudType> | JiraCrudType | unknown = unknown
 > {
-  //<P extends Record<string, Object>, D extends Record<string, JiraType> | unknown = unknown> {
+  //<P extends Record<string, Object>, D extends Record<string, JiraCrudType> | unknown = unknown> {
   constructor(protected propertyKey: string, private _property: P = {} as P) {
     this.property = Object();
   }
@@ -76,4 +76,3 @@ class ConnectAppProperty<
 }
 
 // export class ForgeAppProperty
-export default ConnectAppProperty;

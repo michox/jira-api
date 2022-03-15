@@ -1,6 +1,6 @@
 import { PageBean } from "./CrudType";
-import JiraApi from "./JiraApi";
-import JiraCrudType from "./JiraCrudType";
+import {JiraApi} from "./JiraApi";
+import {JiraCrudType} from "./JiraCrudType";
 
 export interface FieldConfigurationCreateRequest {
   name: string;
@@ -27,7 +27,7 @@ export interface FieldConfigurationItem {
   renderer?: string;
 }
 
-export default class FieldConfiguration extends JiraCrudType<
+export class FieldConfiguration extends JiraCrudType<
   FieldConfigurationDetails,
   FieldConfigurationCreateRequest
 > {

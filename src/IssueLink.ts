@@ -1,13 +1,13 @@
-import IssueLinkType from "./IssueLinkType";
-import JiraType from "./JiraCrudType";
-import Comment from "./Comment";
+import {IssueLinkType} from "./IssueLinkType";
+import {JiraCrudType} from "./JiraCrudType";
+import {Comment} from "./Comment";
 
-export default class IssueLink extends JiraType {
+export class IssueLink extends JiraCrudType {
   constructor() {
     super("/rest/api/3/issueLink");
   }
 
-  create(requestBody: IssueLinkTypeCreateRequest) {
+  create(requestBody: IssueLinkCreateRequest) {
     if (requestBody.type instanceof IssueLinkType) {
       requestBody.type = requestBody.type.body.name;
     }
@@ -15,7 +15,7 @@ export default class IssueLink extends JiraType {
   }
 }
 
-export interface IssueLinkTypeCreateRequest {
+export interface IssueLinkCreateRequest {
   type: IssueLinkType | string;
   inwardIssue: string;
   outwardIssue: string;

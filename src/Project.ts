@@ -1,8 +1,8 @@
-import JiraType from "./JiraCrudType";
-import JiraApi from "./JiraApi";
+import { JiraCrudType } from "./JiraCrudType";
+import { JiraApi } from "./JiraApi";
 import { CrudState } from "./CrudType";
-import WorkflowScheme, { WorkflowSchemeAssociationContainer, WorkflowSchemeDetails } from "./WorkflowScheme";
-import FieldConfigurationScheme, { FieldConfigurationSchemeDetails } from "./FieldConfigurationScheme";
+import { WorkflowScheme, WorkflowSchemeDetails } from "./WorkflowScheme";
+import { FieldConfigurationScheme, FieldConfigurationSchemeDetails } from "./FieldConfigurationScheme";
 
 interface ProjectBaseCreateRequest {
   name: string;
@@ -263,7 +263,7 @@ interface IssueTypeScreenSchemeResponse {
   description: string;
 }
 
-export default class Project extends JiraType<ProjectDetails, ProjectCreateRequest> {
+export class Project extends JiraCrudType<ProjectDetails, ProjectCreateRequest> {
   constructor() {
     super("/rest/api/3/project");
   }

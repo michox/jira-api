@@ -36,3 +36,9 @@ export interface JiraApiOptions {
   experimental?: boolean | undefined;
   binaryAttachment?: boolean | undefined;
 }
+
+export function encodeObject(params: any) {
+  return Object.keys(params)
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    .join("&");
+}

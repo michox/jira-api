@@ -4,7 +4,7 @@ import { ConnectResponse, ConnectError } from "./JiraApiTypes";
 declare var AP: any;
 import { CrudState } from "./CrudType";
 
-export default async function JiraApi<BodyType = any>(
+export async function JiraApi<BodyType = any>(
   url: string, //required if not provided in base argument
   body?: {} | string,
   method: "POST" | "PUT" | "GET" | "DELETE" = "GET",
@@ -134,8 +134,3 @@ function preprocessConnectRequest(options: any) {
   return connectOptions;
 }
 
-export function encodeObject(params: any) {
-  return Object.keys(params)
-    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-    .join("&");
-}

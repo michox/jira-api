@@ -1,6 +1,6 @@
-import JiraType from "./JiraCrudType";
-import Avatar from "./Avatar";
-import JiraApi from "./JiraApi";
+import {JiraCrudType} from "./JiraCrudType";
+import {Avatar} from "./Avatar";
+import {JiraApi} from "./JiraApi";
 
 interface BriefAvatar {
   path: string;
@@ -46,7 +46,7 @@ interface Project {
 
 interface AvatarUrls {}
 
-export default class IssueType extends JiraType<IssueTypeDetails, IssueTypeCreateRequest> {
+export class IssueType extends JiraCrudType<IssueTypeDetails, IssueTypeCreateRequest> {
   constructor() {
     super("/rest/api/3/issuetype");
   }

@@ -1,4 +1,4 @@
-import JiraCrudType from "./JiraCrudType";
+import {JiraCrudType} from "./JiraCrudType";
 
 export interface CustomerInvitationRequest {
   projectKey: string;
@@ -7,7 +7,7 @@ export interface CustomerInvitationRequest {
   subjectConfig: string;
 }
 
-export default class CustomerInvitation extends JiraCrudType<CustomerInvitationRequest> {
+export class CustomerInvitation extends JiraCrudType<CustomerInvitationRequest> {
   constructor() {
     super("/rest/servicedesk/notifications/1/account-notifications");
   }

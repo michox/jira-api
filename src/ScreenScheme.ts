@@ -1,6 +1,6 @@
-import JiraType from "./JiraCrudType";
-import JiraApi from "./JiraApi";
-import { CrudState, PageBean } from "./CrudType";
+import { JiraCrudType } from "./JiraCrudType";
+import { JiraApi } from "./JiraApi";
+import { PageBean } from "./CrudType";
 
 export interface ScreenSchemeRequest {
   screens: {
@@ -17,7 +17,7 @@ export interface ScreenSchemeBody extends ScreenSchemeRequest {
   id?: number | string;
 }
 
-export default class ScreenScheme extends JiraType<ScreenSchemeBody, ScreenSchemeRequest> {
+export class ScreenScheme extends JiraCrudType<ScreenSchemeBody, ScreenSchemeRequest> {
   constructor() {
     super(`/rest/api/3/screenscheme`);
   }

@@ -6,7 +6,7 @@ declare const httpClient: RequestPromiseAPI;
 import { CrudState } from "./CrudType";
 
 
-export default async function JiraApi<BodyType = any>(
+export async function JiraApi<BodyType = any>(
   url: string, //required if not provided in base argument
   body?: {} | string,
   method: "POST" | "PUT" | "GET" | "DELETE" = "GET",
@@ -103,8 +103,3 @@ export default async function JiraApi<BodyType = any>(
 }
 
 
-export function encodeObject(params: any) {
-  return Object.keys(params)
-    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-    .join("&");
-}

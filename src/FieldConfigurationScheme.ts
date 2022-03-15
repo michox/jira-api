@@ -1,8 +1,8 @@
 import { PageBean } from "./CrudType";
-import JiraApi from "./JiraApi";
-import JiraCrudType from "./JiraCrudType";
+import { JiraApi } from "./JiraApi";
+import { JiraCrudType } from "./JiraCrudType";
 
-export interface FieldConfigurationCreateRequest {
+export interface FieldConfigurationSchemeCreateRequest {
   name: string;
   description?: string;
   projectId?: string | number;
@@ -21,16 +21,15 @@ export interface FieldConfigurationSchemeMapping {
   fieldConfigurationId: string | number;
 }
 
-export default class FieldConfigurationScheme extends JiraCrudType<
+export class FieldConfigurationScheme extends JiraCrudType<
   FieldConfigurationSchemeDetails,
-  FieldConfigurationCreateRequest
+  FieldConfigurationSchemeCreateRequest
 > {
   constructor() {
     super("/rest/api/3/fieldconfigurationscheme");
   }
   async read() {
     if (!this?.body?.id) {
-      
     }
     let state = await JiraApi<PageBean<FieldConfigurationSchemeDetails>>(
       this._defaultRestAddress + "?id=" + this.body.id
@@ -46,12 +45,12 @@ export default class FieldConfigurationScheme extends JiraCrudType<
     this.setState({ ...state, body: state.body.values[0]?.fieldConfigurationScheme });
     return this;
   }
-  async create(body: FieldConfigurationCreateRequest) {
-    console.log('creating field configuration scheme with name', body.name);
+  async create(body: FieldConfigurationSchemeCreateRequest) {
+    console.log("creating field configuration scheme with name", body.name);
     await super.create({ name: body.name, description: body.description });
     body.projectId && (await this.assignToProject(body.projectId));
     body.mapping && (await this.setMapping(body.mapping));
-    console.log(this.body.name)
+    console.log(this.body.name);
     return this;
   }
 
@@ -64,14 +63,16 @@ export default class FieldConfigurationScheme extends JiraCrudType<
   }
 
   async getMapping() {
-    if (!this.body.id){console.error('Field Configuration Scheme ID has not yet been defined.')}
+    if (!this.body.id) {
+      console.error("Field Configuration Scheme ID has not yet been defined.");
+    }
     this.body.mapping = (
       await JiraApi<PageBean<FieldConfigurationSchemeMapping & { fieldConfigurationSchemeId: string }>>(
         this._defaultRestAddress + "/mapping?maxResults=1000&fieldConfigurationSchemeId=" + this.body.id
       )
     ).body.values.map((item) => {
       if (this.body.id != item.fieldConfigurationSchemeId) {
-        console.error('unexpected configuration scheme id.')
+        console.error("unexpected configuration scheme id.");
       }
       return { issueTypeId: item.issueTypeId, fieldConfigurationId: item.fieldConfigurationId };
     });
@@ -79,7 +80,6 @@ export default class FieldConfigurationScheme extends JiraCrudType<
   }
 
   async setMapping(mapping: FieldConfigurationSchemeMapping[]) {
-    
     this.body.mapping = mapping;
     (
       await JiraApi<PageBean<FieldConfigurationSchemeMapping>>(
@@ -91,7 +91,7 @@ export default class FieldConfigurationScheme extends JiraCrudType<
   }
 
   async getFieldConfigurationIdForIssueType(issueTypeId: string) {
-    console.log('getFieldConfigurationIdForIssueType: ', issueTypeId);
+    console.log("getFieldConfigurationIdForIssueType: ", issueTypeId);
 
     let items = await this.getMapping();
     let item =
@@ -111,7 +111,7 @@ export default class FieldConfigurationScheme extends JiraCrudType<
       page = await getPage(page.startAt + page.maxResults);
       page.values.forEach((value) => unusedItems.push(value));
     }
-    
+
     return Promise.all(unusedItems.map((item) => new FieldConfigurationScheme().WithId(item.id).delete()));
   }
 }

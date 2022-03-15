@@ -1,5 +1,5 @@
-import JiraApi from "./JiraApi";
-import JiraCrudType from "./JiraCrudType";
+import {JiraApi} from "./JiraApi";
+import {JiraCrudType} from "./JiraCrudType";
 
 type ProjectPermissions =
   | "ADMINISTER_PROJECTS"
@@ -102,7 +102,7 @@ interface Holder {
   parameter?: string; //the group, role, accountId, customFieldId or nothing, depending on the type
 }
 
-export default class PermissionScheme extends JiraCrudType<PermissionSchemeDetails, PermissionSchemeCreateRequest> {
+export class PermissionScheme extends JiraCrudType<PermissionSchemeDetails, PermissionSchemeCreateRequest> {
   constructor() {
     super("/rest/api/3/permissionscheme");
   }

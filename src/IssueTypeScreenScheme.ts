@@ -1,7 +1,6 @@
-import JiraType from "./JiraCrudType";
-import JiraApi from "./JiraApi";
+import {JiraCrudType} from "./JiraCrudType";
+import {JiraApi} from "./JiraApi";
 import { PageBean } from "./CrudType";
-import IssueTypeScheme from "./IssueTypeScheme";
 
 export interface IssueTypeScreenSchemeDetails {
   id: string | number;
@@ -25,7 +24,7 @@ export interface IssueTypeScreenSchemeItem extends IssueTypeMapping {
   issueTypeScreenSchemeId: string;
 }
 
-export default class IssueTypeScreenScheme extends JiraType<IssueTypeScreenSchemeDetails, IssueTypeScreenSchemeRequest> {
+export class IssueTypeScreenScheme extends JiraCrudType<IssueTypeScreenSchemeDetails, IssueTypeScreenSchemeRequest> {
   constructor() {
     super(`/rest/api/3/issuetypescreenscheme`);
   }

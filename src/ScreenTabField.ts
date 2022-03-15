@@ -1,5 +1,5 @@
-import JiraApi from "./JiraApi";
-import JiraType from "./JiraCrudType";
+import { JiraApi } from "./JiraApi";
+import { JiraCrudType } from "./JiraCrudType";
 
 interface ScreenTabFieldCreateRequest {
   fieldId: string | number;
@@ -9,12 +9,10 @@ export interface ScreenTabFieldDetails {
   name: string;
 }
 
-export class ScreenTabField extends JiraType<ScreenTabFieldDetails, ScreenTabFieldCreateRequest> {
+export class ScreenTabField extends JiraCrudType<ScreenTabFieldDetails, ScreenTabFieldCreateRequest> {
   constructor(screenId: string | number, tabId: string | number) {
     super(`/rest/api/3/screens/${screenId}/tabs/${tabId}/fields`);
   }
-
-
 
   async move(arg: { after: string } | { position: "Earlier" | "Later" | "First" | "Last" }) {
     await JiraApi(this._defaultRestAddress + "/" + this.body.id + "/move", arg, "POST");

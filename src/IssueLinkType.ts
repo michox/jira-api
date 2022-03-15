@@ -1,5 +1,5 @@
-import JiraApi from "./JiraApi";
-import JiraType from "./JiraCrudType";
+import {JiraApi} from "./JiraApi";
+import {JiraCrudType} from "./JiraCrudType";
 
 export interface IssueLinkTypeCreateRequest {
   name: string;
@@ -21,7 +21,7 @@ export interface IssueLinkTypeDetails {
   self: string;
 }
 
-export default class IssueLinkType extends JiraType<IssueLinkTypeDetails> {
+export class IssueLinkType extends JiraCrudType<IssueLinkTypeDetails> {
   constructor() {
     super("/rest/api/3/issueLinkType");
   }

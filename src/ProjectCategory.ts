@@ -1,5 +1,5 @@
-import JiraApi from "./JiraApi";
-import JiraType from "./JiraCrudType";
+import {JiraApi} from "./JiraApi";
+import {JiraCrudType} from "./JiraCrudType";
 
 export interface ProjectCategoryCreateRequest {
   name: string;
@@ -12,7 +12,7 @@ interface ProjectCategoryDetails {
   name: string;
   description: string;
 }
-export default class ProjectCategory extends JiraType<ProjectCategoryDetails, ProjectCategoryCreateRequest> {
+export class ProjectCategory extends JiraCrudType<ProjectCategoryDetails, ProjectCategoryCreateRequest> {
   constructor() {
     super("/rest/api/3/projectCategory");
   }

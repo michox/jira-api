@@ -1,5 +1,5 @@
-import JiraType from "./JiraCrudType";
-import JiraApi from "./JiraApi";
+import {JiraCrudType} from "./JiraCrudType";
+import {JiraApi} from "./JiraApi";
 
 export interface QueueCreateRequest {
   name: string;
@@ -13,7 +13,7 @@ export interface QueueDetails extends QueueCreateRequest {
   id:string
 }
 
-export class Queue extends JiraType<QueueDetails, QueueCreateRequest> {
+export class Queue extends JiraCrudType<QueueDetails, QueueCreateRequest> {
   constructor(projectKey: string) {
     super(`/rest/servicedesk/1/servicedesk/${projectKey}/queues`);
     this.body.projectKey = projectKey;

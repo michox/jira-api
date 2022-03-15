@@ -1,5 +1,5 @@
-import JiraType from "./JiraCrudType";
-import JiraApi from "./JiraApi";
+import {JiraCrudType} from "./JiraCrudType";
+import {JiraApi} from "./JiraApi";
 import { PageBean } from "./CrudType";
 
 export interface IssueTypeSchemeCreateRequest {
@@ -14,7 +14,7 @@ export interface IssueTypeSchemeDetails extends IssueTypeSchemeCreateRequest {
   issueTypeSchemeId?: string | number;
 }
 
-export default class IssueTypeScheme extends JiraType<IssueTypeSchemeDetails, IssueTypeSchemeCreateRequest> {
+export class IssueTypeScheme extends JiraCrudType<IssueTypeSchemeDetails, IssueTypeSchemeCreateRequest> {
   constructor() {
     super(`/rest/api/3/issuetypescheme`);
   }

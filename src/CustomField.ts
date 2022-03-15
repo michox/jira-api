@@ -1,8 +1,8 @@
 import { PageBean } from "./CrudType";
 import { DefaultCustomFieldValue } from "./CustomFieldDefaultValue";
 import { CustomFieldOption, createOrUpdateOptions } from "./CustomFieldOption";
-import JiraApi from "./JiraApi";
-import JiraType from "./JiraCrudType";
+import {JiraApi} from "./JiraApi";
+import {JiraCrudType} from "./JiraCrudType";
 
 export declare type TypeAndSearcher =
   | { name: "cascadingselect"; abrSearcher: "cascadingselectsearcher" }
@@ -104,7 +104,7 @@ interface Project {
 
 interface AvatarUrls {}
 
-export default class CustomField extends JiraType<CustomFieldDetails, CustomFieldCreateRequest> {
+export class CustomField extends JiraCrudType<CustomFieldDetails, CustomFieldCreateRequest> {
   constructor() {
     super("/rest/api/3/field", );
   }

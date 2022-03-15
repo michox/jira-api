@@ -1,12 +1,12 @@
-import JiraApi from "./JiraApi";
-import JiraCrudType from "./JiraCrudType";
+import { JiraApi } from "./JiraApi";
+import { JiraCrudType } from "./JiraCrudType";
 
 export interface StatusDetails {
   self?: string;
   description?: string;
   iconUrl?: string;
   name: string;
-  id: string|number;
+  id: string | number;
   statusCategory?: StatusCategory;
 }
 
@@ -18,12 +18,12 @@ interface StatusCategory {
   name: string;
 }
 
-export default class Status extends JiraCrudType<StatusDetails> {
+export class Status extends JiraCrudType<StatusDetails> {
   constructor() {
     super("/rest/api/3/status");
   }
 
-//status must be associated with a workflow to be found
+  //status must be associated with a workflow to be found
   read(nameOrId: string) {
     return super.read("/rest/api/3/status/" + nameOrId);
   }

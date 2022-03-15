@@ -1,10 +1,10 @@
-import FieldConfiguration, { FieldConfigurationItem } from "./FieldConfiguration";
-import Project from "./Project";
-import JiraApi from "./JiraApi";
-import JiraCrudType from "./JiraCrudType";
+import { FieldConfiguration, FieldConfigurationItem } from "./FieldConfiguration";
+import { Project } from "./Project";
+import { JiraApi } from "./JiraApi";
+import { JiraCrudType } from "./JiraCrudType";
 import { PageBean } from "./CrudType";
-import FieldConfigurationScheme from "./FieldConfigurationScheme";
-import ServiceDesk from "./ServiceDesk";
+import { FieldConfigurationScheme } from "./FieldConfigurationScheme";
+import { ServiceDesk } from "./ServiceDesk";
 
 export interface RequestTypeCreateRequest {
   issueTypeId: string | number; //ID of the request type to add to the service desk.
@@ -85,7 +85,7 @@ interface Links {
   self: string;
 }
 
-export default class RequestType extends JiraCrudType<RequestTypeDetails, RequestTypeCreateRequest> {
+export class RequestType extends JiraCrudType<RequestTypeDetails, RequestTypeCreateRequest> {
   constructor(serviceDeskIdOrProjectKey: string) {
     super(`/rest/servicedeskapi/servicedesk/${serviceDeskIdOrProjectKey}/requesttype`);
   }

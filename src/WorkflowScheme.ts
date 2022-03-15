@@ -1,5 +1,5 @@
-import JiraType from "./JiraCrudType";
-import JiraApi from "./JiraApi";
+import { JiraCrudType } from "./JiraCrudType";
+import { JiraApi } from "./JiraApi";
 import { CrudState, PageBean } from "./CrudType";
 
 interface IssueTypeMappings {
@@ -33,7 +33,7 @@ export interface WorkflowSchemeAssociationContainer {
   values: WorkflowSchemeResponseValue[];
 }
 
-export default class WorkflowScheme extends JiraType<WorkflowSchemeDetails, WorkflowSchemeCreateRequest> {
+export class WorkflowScheme extends JiraCrudType<WorkflowSchemeDetails, WorkflowSchemeCreateRequest> {
   constructor() {
     super(`/rest/api/3/workflowscheme`);
   }
@@ -54,16 +54,16 @@ export default class WorkflowScheme extends JiraType<WorkflowSchemeDetails, Work
       return requestState.body;
     });
   };
-  
+
   static async deleteAllUnused() {
     let getPage = async (startAt = 0) => {
-      return JiraApi<PageBean<{ id: number }>>(
-        `/rest/api/3/workflowscheme?startAt=` + startAt
-      ).then(({ body }) => body);
+      return JiraApi<PageBean<{ id: number }>>(`/rest/api/3/workflowscheme?startAt=` + startAt).then(
+        ({ body }) => body
+      );
     };
     let page = await getPage();
     let unusedItems: any[] = [];
-    page.values.forEach((value) =>  unusedItems.push(value));
+    page.values.forEach((value) => unusedItems.push(value));
     while (!page.isLast) {
       page = await getPage(page.startAt + page.maxResults);
       page.values.forEach((value) => unusedItems.push(value));
@@ -73,7 +73,7 @@ export default class WorkflowScheme extends JiraType<WorkflowSchemeDetails, Work
   }
 }
 
-export class IssueTypeWorkflow extends JiraType {
+export class IssueTypeWorkflow extends JiraCrudType {
   constructor(workflowSchemeId: number | string) {
     super(`/rest/api/3/workflowscheme/${workflowSchemeId}/issuetype`);
   }

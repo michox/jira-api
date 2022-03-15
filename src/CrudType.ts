@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import "regenerator-runtime/runtime";
 
 export interface CrudState<BodyType = any> {
@@ -17,7 +17,7 @@ export interface PageBean<ContentType> {
   nextPage?: string;
 }
 
-export default abstract class CrudType<BodyType extends { id?: string | number } = any, RequestType = any> {
+export abstract class CrudType<BodyType extends { id?: string | number } = any, RequestType = any> {
   constructor(
     protected _defaultRestAddress: string,
     protected _defaultCreateAddress?: string,

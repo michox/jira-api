@@ -1,7 +1,7 @@
 import { PageBean } from "./CrudType";
-import JiraApi from "./JiraApi";
-import JiraType from "./JiraCrudType";
-import ScreenTab from "./ScreenTab";
+import { JiraApi } from "./JiraApi";
+import { JiraCrudType } from "./JiraCrudType";
+import { ScreenTab } from "./ScreenTab";
 
 export interface ScreenCreateRequest {
   name: string;
@@ -19,7 +19,7 @@ export interface ScreenDetails {
   workflowTransitions?: any;
 }
 
-export default class Screen extends JiraType<ScreenDetails, ScreenCreateRequest> {
+export class Screen extends JiraCrudType<ScreenDetails, ScreenCreateRequest> {
   constructor() {
     super("/rest/api/3/screens");
     this.body.screenTabs = Array<ScreenTab>();
@@ -35,7 +35,7 @@ export default class Screen extends JiraType<ScreenDetails, ScreenCreateRequest>
           return this.update(requestBody);
         }
       }
-    } 
+    }
     // else {
     //   await this.readByName(requestBody.name);
     //   if (this.body?.id) {
