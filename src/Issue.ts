@@ -1,6 +1,6 @@
 
 import { DocNode } from "@atlaskit/adf-utils/dist/types/validator/entry";
-import { encodeObject } from "JiraApiTypes";
+import { encodeObject } from "./JiraApiTypes";
 import {JiraApi}  from "./JiraApi";
 import {JiraCrudType} from "./JiraCrudType";
 

@@ -2,7 +2,7 @@ import {JiraApi} from "./JiraApi";
 import {JiraCrudType} from "./JiraCrudType";
 declare var addonKey: string; //available via the react-layout.hbs in the views folder
 
-export class ConnectAppProperty<
+export class AppProperty<
   P extends Record<string, any>,
   D extends Record<string, JiraCrudType> | JiraCrudType | unknown = unknown
 > {

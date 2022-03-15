@@ -1,6 +1,6 @@
 {
   "name": "jira-classes",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "A library to provide Typescript interfaces for the Jira API and the React Framework. Currently only supports Connect Modules (browser and ACE provided that AP or an httpClient are defined) but Forge API could be enabled in the future. This is a total work in progress without documentation and primarily here for personal use! However, contributions are welcome.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,7 +14,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc "
   },
-  "prepublish": "tsc ",
+  "prepublish": "npm run build ",
   "keywords": [
     "jira"
   ],

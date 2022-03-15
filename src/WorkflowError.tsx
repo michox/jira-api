@@ -1,6 +1,6 @@
-import {ConnectAppProperty} from "./AppProperty";
+import { AppProperty } from "./AppProperty";
 import { PageBean } from "./CrudType";
-import {JiraApi} from "./JiraApi";
+import { JiraApi } from "./JiraApi";
 import Panel from "@atlaskit/panel";
 import SectionMessage from "@atlaskit/section-message";
 import { useQuery, QueryClient, QueryClientProvider } from "react-query";
@@ -40,7 +40,7 @@ interface WorkflowId {
 
 interface WorkflowErrorDetails {}
 
-export class WorkflowError extends ConnectAppProperty<Record<string, WorkflowErrorDetails>> {
+export class WorkflowError extends AppProperty<Record<string, WorkflowErrorDetails>> {
   constructor(private postFunctionId?: string) {
     super(postFunctionId || "");
   }
