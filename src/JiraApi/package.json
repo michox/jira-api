@@ -1,0 +1,12 @@
+{
+  "name": "jiraapi",
+  "version": "0.1.0",
+  "description": "Used to map different request methods to a common pattern",
+  "main": "JiraApi.js",
+  "browser":"JiraApi.browser.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "michox",
+  "license": "ISC"
+}

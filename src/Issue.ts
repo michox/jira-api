@@ -1,7 +1,6 @@
 
 import { DocNode } from "@atlaskit/adf-utils/dist/types/validator/entry";
-import { encodeObject } from "./JiraApiTypes";
-import {JiraApi}  from "./JiraApi";
+import {JiraApi, encodeObject}  from "./JiraApi";
 import {JiraCrudType} from "./JiraCrudType";
 
 export class Issue extends JiraCrudType<IssueBean, IssueCreateRequest> {

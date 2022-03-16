@@ -1,6 +1,5 @@
 import { JiraCrudType } from "./JiraCrudType";
-import { JiraApi } from "./JiraApi";
-import { encodeObject } from "./JiraApiTypes";
+import { JiraApi, encodeObject } from "./JiraApi";
 
 interface UserSearchResult {
   self: string;

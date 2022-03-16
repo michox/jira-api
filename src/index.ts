@@ -17,7 +17,6 @@ export * from './IssueType';
 export * from './IssueTypeScheme';
 export * from './IssueTypeScreenScheme';
 export * from './JiraApi';
-export * from './JiraApiTypes';
 export * from './JiraCrudType';
 export * from './PermissionScheme';
 export * from './Project';

@@ -1,8 +1,10 @@
-// import api, { route, storage } from "@forge/api";
-import { ConnectResponse, ConnectError } from "./JiraApiTypes";
+import { ConnectResponse, ConnectError, JiraApiOptions } from "./JiraApiTypes";
+import { RequestPromiseAPI  } from "request-promise-native";
+export * from './JiraApiTypes'
+declare const httpClient: RequestPromiseAPI;
 
-declare var AP: any;
-import { CrudState } from "./CrudType";
+import { CrudState } from "../CrudType";
+
 
 export async function JiraApi<BodyType = any>(
   url: string, //required if not provided in base argument
@@ -12,14 +14,7 @@ export async function JiraApi<BodyType = any>(
     Accept: "application/json",
     // "Content-Type": "application/json",
   },
-  params?: {
-    cache?: boolean;
-    contentType?: string;
-    success?: (responseText: any) => void;
-    error?: (responseText: any) => void;
-    experimental?: boolean;
-    binaryAttachment?: boolean;
-  },
+  params?: JiraApiOptions,
   retryCount = 2
 ): Promise<CrudState<BodyType>> {
   if (typeof body != "string" && typeof body != undefined) {
@@ -32,19 +27,17 @@ export async function JiraApi<BodyType = any>(
     error: undefined,
   };
 
-  // #if connect
-  let connectOptions = preprocessConnectRequest(options);
 
   // console.log('making request', connectOptions);
-  await AP.request(url, connectOptions).then(
-    (response: ConnectResponse) => handleResponse<BodyType>(response),
+  await httpClient(url, options).then(
+    (response: ConnectResponse) => handleResponse(response),
     (error: ConnectError) => handleError(error)
   );
   if (response.statusCode == 500) {
     //handle internal server error from Jira that can happen any time, especially when many requests are made
     switch (method) {
       case "DELETE": {
-        AP.request(url, { ...connectOptions, type: "GET" }).then(
+        httpClient(url, { ...options, method: "GET" }).then(
           (r: ConnectResponse) => JiraApi(url, body, method, headers, params).then((r) => (response = r)), //retry if still exists
           (err: ConnectError) => {
             if (err.xhr.status === 404 || err.xhr.status === 400) {
@@ -96,7 +89,7 @@ export async function JiraApi<BodyType = any>(
     return response;
   }
 
-  function handleResponse<BodyType = any>(data: ConnectResponse) {
+  function handleResponse(data: ConnectResponse) {
     try {
       response.body = JSON.parse(data?.body);
     } catch (error) {
@@ -106,31 +99,7 @@ export async function JiraApi<BodyType = any>(
     response.statusCode = data.xhr.status;
     return response;
   }
-  // #else
-  /*
-  let response = await api.asUser().requestJira(route`${url}`, options);
-  
-  if (!response.ok) {
-    console.log(
-      `API request of method ${method} to ${url} with content ${body} failed. Status: ${response.status}: ${response.statusText}`
-      );
-      throw `API request of method ${method} to ${url} with content ${body} failed. Status: ${response.status}: ${response.statusText}`;
-    } else {
-      return response;
-    }
-    */
-  // #end else
+
 }
 
-function preprocessConnectRequest(options: any) {
-  let { ...connectOptions }: any = {
-    ...options,
-    data: options.body,
-    type: options.method,
-  };
-  delete connectOptions.body;
-  delete connectOptions.method;
-  connectOptions.contentType || (connectOptions.data && (connectOptions.contentType = "application/json"));
-  return connectOptions;
-}
 

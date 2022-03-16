@@ -39,7 +39,7 @@ export class WorkflowScheme extends JiraCrudType<WorkflowSchemeDetails, Workflow
   }
 
   static readAllWorkflowSchemes = async (
-    projectIds?: number[] | string[]
+    projectIds?: (number | string)[]
   ): Promise<WorkflowSchemeAssociationContainer> => {
     let query = "";
     if (projectIds) {
