@@ -3,10 +3,10 @@ import { PageBean } from "./CrudType";
 import { JiraApi } from "./JiraApi";
 import Panel from "@atlaskit/panel";
 import SectionMessage from "@atlaskit/section-message";
-import { useQuery, QueryClient, QueryClientProvider } from "react-query";
+import { useQuery, QueryClient, QueryClientProvider, useQueryClient } from "react-query";
 import React from "react";
 
-let queryClient = new QueryClient();
+const queryClient = new QueryClient();
 
 interface WorkflowRuleConfiguration {
   workflowId: WorkflowId;
@@ -41,7 +41,7 @@ interface WorkflowId {
 interface WorkflowErrorDetails {}
 
 export class WorkflowError extends AppProperty<Record<string, WorkflowErrorDetails>> {
-  constructor(private postFunctionId?: string) {
+  constructor(public postFunctionId?: string) {
     super(postFunctionId || "");
   }
 
@@ -62,37 +62,40 @@ export class WorkflowError extends AppProperty<Record<string, WorkflowErrorDetai
     this.property[new Date().toISOString()] = content;
     return this.update();
   }
+}
 
-  renderLogSection() {
-    return <QueryClientProvider client={queryClient}>{this.WorkflowErrorLog()}</QueryClientProvider>;
-  }
-
-  WorkflowErrorLog() {
-    if (this.propertyKey?.length) {
-      console.error("No property key has been defined. Can not read logs");
-      return;
-    }
-    let { data } = useQuery("getErrorLog", () => this.read());
-    return (
-      data &&
-      Object.values(data.property)?.length && (
-        <SectionMessage
-          title="An error occurred in a previous run"
-          appearance="error"
-          actions={[
-            {
-              key: "clearLog",
-              type: "link",
-              props: {
-                children: [<a>Clear Log</a>],
-                onClick: () => this.delete().then(() => queryClient.invalidateQueries("getErrorLog")),
+export function useWorkflowErrorLog(workflowError: WorkflowError) {
+  <QueryClientProvider client={queryClient}>
+    {() => {
+      let queryClient = useQueryClient();
+      let { data } = useQuery("getErrorLog", () =>
+        workflowError.postFunctionId?.length ? workflowError.read() : null
+      );
+      if (data == null) {
+        console.error("No property key has been defined. Can not read logs");
+        return;
+      }
+      return (
+        data &&
+        Object.values(data.property)?.length && (
+          <SectionMessage
+            title="An error occurred in a previous run"
+            appearance="error"
+            actions={[
+              {
+                key: "clearLog",
+                type: "link",
+                props: {
+                  children: [<a>Clear Log</a>],
+                  onClick: () => workflowError.delete().then(() => queryClient.invalidateQueries("getErrorLog")),
+                },
               },
-            },
-          ]}
-        >
-          <Panel header="Show Details...">{JSON.stringify(data.property)}</Panel>
-        </SectionMessage>
-      )
-    );
-  }
+            ]}
+          >
+            <Panel header="Show Details...">{JSON.stringify(data.property)}</Panel>
+          </SectionMessage>
+        )
+      );
+    }}
+  </QueryClientProvider>;
 }
