@@ -1,7 +1,6 @@
-
 import { DocNode } from "@atlaskit/adf-utils/dist/types/validator/entry";
-import {JiraApi, encodeObject}  from "./JiraApi";
-import {JiraCrudType} from "./JiraCrudType";
+import { JiraApi, encodeObject } from "./JiraApi";
+import { JiraCrudType } from "./JiraCrudType";
 
 export class Issue extends JiraCrudType<IssueBean, IssueCreateRequest> {
   constructor() {
@@ -25,6 +24,24 @@ export class Issue extends JiraCrudType<IssueBean, IssueCreateRequest> {
       return Promise.resolve(undefined);
     }
     return Promise.all(this.body?.fields?.attachment.map((attachment) => JiraApi(attachment.content)));
+  }
+
+  async getFields(field: string | string[]) {
+    let response = await JiraApi<IssueBean>(`${this._defaultRestAddress}/${this.body.id}?fields=-*all,${field}`);
+    this.state = { ...response, body: { ...this.body, fields: response.body.fields } };
+    return this;
+  }
+
+  async getProperty(propertyKey: string) {
+    let response = await JiraApi(`${this._defaultRestAddress}/${this.body.id}/properties/${propertyKey}`);
+    this.state = { ...response, body: { ...this.body, properties: response.body } };
+    return this;
+  }
+
+  async assign(accountId: string | null | -1=null) {
+    let response = await JiraApi(`${this._defaultRestAddress}/${this.body.id}/assignee`, { accountId }, "PUT");
+    this.state = { ...response, body: { ...this.body } };
+    return this
   }
 }
 
@@ -198,11 +215,6 @@ interface Recipients {
   users: User[];
 }
 
-interface User {
-  accountId: string;
-  active?: boolean;
-}
-
 interface Group {
   name: string;
 }
@@ -216,8 +228,8 @@ interface Fields {
   "sub-tasks"?: Subtask[];
   description?: DocNode;
   issuetype: { id: string | number };
-  reporter?: { id: string | number };
-  assignee?: { id: string | number };
+  reporter?: User;
+  assignee?: User;
   components?: { id: string | number }[];
   priority?: { id: string | number };
   comment?: Comment[];
@@ -326,7 +338,7 @@ interface Attachment {
   id: number;
   self: string;
   filename: string;
-  author: Author;
+  author: User;
   created: string;
   size: number;
   mimeType: string;
@@ -335,7 +347,7 @@ interface Attachment {
   mediaApiFileId: string;
 }
 
-interface Author {
+interface User {
   self: string;
   key: string;
   accountId: string;
