@@ -139,11 +139,11 @@ export abstract class CrudType<BodyType extends { id?: string | number } = any, 
     return this;
   }
 
-  async readAll(startAt = 0) {
+  async readAll<ResponseType = PageBean<BodyType>>(startAt = 0) {
     //@ts-ignore override response type of fetch function
-    return this.fetchFunction(this._defaultRestAddress + "?startAt=" + startAt, {}, "GET") as Promise<
+    return this.fetchFunction(this._defaultRestAddress + (startAt ? "?startAt=" + startAt : ""), {}, "GET") as Promise<
       //@ts-ignore override response type of fetch function
-      CrudState<PageBean<BodyType>>
+      CrudState<ResponseType>
     >;
   }
 
