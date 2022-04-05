@@ -38,7 +38,7 @@ export class FieldConfiguration extends JiraCrudType<
   async create(body: FieldConfigurationCreateRequest) {
     let { configuration, ...createBody } = body;
     await super.create(createBody);
-    if (this.error?.errorMessages[0] ==='A field configuration is using this name.') await this.readByName(body.name)
+    if (this.error?.errorMessages[0]) await this.readByName(body.name)// assume that fieldconfiguration already exists
     configuration && (await this.updateFieldConfigurationItems(configuration));
     return this;
   }
