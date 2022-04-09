@@ -58,8 +58,8 @@ export class WorkflowError extends AppProperty<Record<string, WorkflowErrorDetai
   }
 
   async pushLog(content: any) {
-    if (!this.property) await this.read();
-    this.property[new Date().toISOString()] = content;
+    if (!this.body) await this.read();
+    this.body[new Date().toISOString()] = content;
     return this.update();
   }
 }
@@ -77,7 +77,7 @@ export function useWorkflowErrorLog(workflowError: WorkflowError) {
       }
       return (
         data &&
-        Object.values(data.property)?.length && (
+        Object.values(data.body)?.length && (
           <SectionMessage
             title="An error occurred in a previous run"
             appearance="error"
@@ -92,7 +92,7 @@ export function useWorkflowErrorLog(workflowError: WorkflowError) {
               },
             ]}
           >
-            <Panel header="Show Details...">{JSON.stringify(data.property)}</Panel>
+            <Panel header="Show Details...">{JSON.stringify(data.body)}</Panel>
           </SectionMessage>
         )
       );
