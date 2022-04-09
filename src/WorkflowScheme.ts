@@ -1,6 +1,6 @@
 import { JiraCrudType } from "./JiraCrudType";
 import { JiraApi } from "./JiraApi";
-import { CrudState, PageBean } from "./CrudType";
+import { CrudState, PageBean } from "JiraApi";
 
 interface IssueTypeMappings {
   [issueTypeId: number | string]: string;

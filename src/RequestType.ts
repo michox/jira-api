@@ -2,16 +2,17 @@ import { FieldConfiguration, FieldConfigurationItem } from "./FieldConfiguration
 import { Project } from "./Project";
 import { JiraApi } from "./JiraApi";
 import { JiraCrudType } from "./JiraCrudType";
-import { PageBean } from "./CrudType";
+import { PageBean } from "JiraApi";
 import { FieldConfigurationScheme } from "./FieldConfigurationScheme";
 import { ServiceDesk } from "./ServiceDesk";
+import { CustomField } from "./CustomField";
 
 export interface RequestTypeCreateRequest {
   issueTypeId: string | number; //ID of the request type to add to the service desk.
   name: string; //Name of the request type on the service desk.
   description?: string; //Description of the request type on the service desk.
   helpText?: string; //Help text for the request type on the service desk.
-  fieldItems?: FieldConfigurationItem[];
+  fieldItems?: (FieldConfigurationItem & { name?: string })[];
   projectKey?: string;
 }
 
@@ -92,8 +93,7 @@ export class RequestType extends JiraCrudType<RequestTypeDetails, RequestTypeCre
   async create({ projectKey, fieldItems, ...body }: RequestTypeCreateRequest): Promise<this> {
     if (fieldItems?.length) {
       this.createWithFieldConfig({ projectKey, fieldItems, ...body });
-    } else console.log("sending request without field items");
-    this.state = await JiraApi(this._defaultRestAddress, body, "POST", undefined, { experimental: true });
+    } else this.state = await JiraApi(this._defaultRestAddress, body, "POST", undefined, { experimental: true });
     return this;
   }
 
@@ -119,6 +119,17 @@ export class RequestType extends JiraCrudType<RequestTypeDetails, RequestTypeCre
   async createWithFieldConfig({ projectKey, fieldItems, ...body }: RequestTypeCreateRequest) {
     if (fieldItems && projectKey) {
       let project = await new Project().WithId(projectKey).read();
+
+      let fieldsWithNewNames = fieldItems.filter((field) => !!field.name);
+      let currentCustomFields = await Promise.all(
+        fieldsWithNewNames.map((field) => new CustomField().WithId(field.id).read())
+      );
+      await Promise.all(
+        fieldsWithNewNames.map((field, index) =>
+          new CustomField().WithId(field.id).update({ name: field.name })
+        )
+      );
+
       let fieldConfigScheme = await new FieldConfigurationScheme().readByProject(project.body.id);
       let fieldConfig = await new FieldConfiguration().create({
         name: projectKey + `: Field Configuration for ` + body.name,
@@ -127,9 +138,14 @@ export class RequestType extends JiraCrudType<RequestTypeDetails, RequestTypeCre
       await fieldConfigScheme.setMapping([
         { issueTypeId: body.issueTypeId, fieldConfigurationId: fieldConfig.body.id },
       ]);
+
       await fieldConfig.updateFieldConfigurationItems(requiredFieldMap(fieldItems));
+
       this.state = await JiraApi(this._defaultRestAddress, body, "POST", undefined, { experimental: true });
+
       await fieldConfig.updateFieldConfigurationItems(unrequiredFieldMap(fieldItems));
+
+      await Promise.all(currentCustomFields.map((field) => field.update({})));
     } else console.error("projectKey not specified for request type");
     return this;
   }

@@ -1,6 +1,6 @@
 import { JiraCrudType } from "./JiraCrudType";
 import { JiraApi } from "./JiraApi";
-import { CrudState } from "./CrudType";
+import { CrudState } from "JiraApi";
 import { WorkflowScheme, WorkflowSchemeDetails } from "./WorkflowScheme";
 import { FieldConfigurationScheme, FieldConfigurationSchemeDetails } from "./FieldConfigurationScheme";
 

@@ -1,6 +1,6 @@
 import {JiraCrudType} from "./JiraCrudType";
 import {JiraApi} from "./JiraApi";
-import { PageBean } from "./CrudType";
+import { PageBean } from "JiraApi";
 
 export interface IssueTypeScreenSchemeDetails {
   id: string | number;

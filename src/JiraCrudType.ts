@@ -1,11 +1,10 @@
 // import React, { useCallback } from "react";
-import {JiraApi} from "./JiraApi";
-import {CrudType, useCrudHook, CrudHookInitParam } from "./CrudType";
+import { CrudType, JiraApi } from "JiraApi";
 // import { useFlags } from "@atlaskit/flag";
 // import { CreateFlagArgs, DismissFn } from "@atlaskit/flag";
 // import ErrorFlag from "components/flags/ErrorFlag";
 
-export class JiraCrudType<BodyType = any, RequestType = any> extends CrudType<BodyType,RequestType> {
+export class JiraCrudType<BodyType = any, RequestType = any> extends CrudType<BodyType, RequestType> {
   constructor(
     protected _defaultRestAddress: string,
     protected _defaultCreateAddress?: string,
@@ -38,9 +37,3 @@ export class JiraCrudType<BodyType = any, RequestType = any> extends CrudType<Bo
   }
 }
 
-export function useJiraCrudHook<T extends JiraCrudType>(object: T, initialization?: CrudHookInitParam<T>) {
-  // let { showFlag } = useFlags();
-  // object.showFlag = useCallback(showFlag, []);
-  useCrudHook(object, initialization);
-  return object;
-}

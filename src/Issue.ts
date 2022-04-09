@@ -1,5 +1,5 @@
 import { DocNode } from "@atlaskit/adf-utils/dist/types/validator/entry";
-import { JiraApi, encodeObject } from "./JiraApi";
+import { encodeObject, JiraApi } from "./JiraApi";
 import { JiraCrudType } from "./JiraCrudType";
 
 export class Issue extends JiraCrudType<IssueBean, IssueCreateRequest> {
@@ -37,11 +37,27 @@ export class Issue extends JiraCrudType<IssueBean, IssueCreateRequest> {
     this.state = { ...response, body: { ...this.body, properties: response.body } };
     return this;
   }
+  async setProperty(propertyKey: string, value: any) {
+    let response = await JiraApi(`${this._defaultRestAddress}/${this.body.id}/properties/${propertyKey}`, value, "PUT");
+    this.state = { ...response, body: { ...this.body, properties: { ...this.body.properties, [propertyKey]: value } } };
+    return this;
+  }
 
-  async assign(accountId: string | null | -1=null) {
+  async assign(accountId: string | null | -1 = null) {
     let response = await JiraApi(`${this._defaultRestAddress}/${this.body.id}/assignee`, { accountId }, "PUT");
     this.state = { ...response, body: { ...this.body } };
-    return this
+    return this;
+  }
+
+  async cloneIssue(issue: IssueBean) {
+    //strip id and other not supported fields
+    //if id map is defined, replace issue constants with new ids
+    //iterate over activities
+    //if activity is comment or transition, do that
+    //upload attachments
+    //clone sub-issues
+    //
+    return this;
   }
 }
 
@@ -69,14 +85,14 @@ interface IssueEditRequest {
 
 interface IssueEditParam {
   //Default: true
-  notifyUsers?: boolean; //Whether a notification email about the issue update is sent to all watchers. To disable the notification, administer Jira or administer project permissions are required. If the user doesn't have the necessary permission the request is ignored.
+  notifyUsers?: boolean; //Whether a notification email about the issue update is sent to all watchers. Status disable the notification, administer Jira or administer project permissions are required. If the user doesn't have the necessary permission the request is ignored.
   //Default: false
   overrideScreenSecurity?: boolean; //Whether screen security is overridden to enable hidden fields to be edited. Available to Connect app users with admin permission and Forge app users with the manage:jira-configuration scope.
   //Default: false
   overrideEditableFlag?: boolean; //Whether screen security is overridden to enable uneditable fields to be edited. Available to Connect app users with admin permission and Forge app users with the manage:jira-configuration scope.
 }
 
-interface Fields {
+export interface Fields {
   [fieldName: string]: any;
 }
 
@@ -103,15 +119,15 @@ interface HistoryMetadataParticipant {
   url: string;
 }
 
-interface IssueBean {
+export interface IssueBean {
   expand: string;
   id: string;
   self: string;
   key: string;
   renderedFields: RenderedFields;
   properties: { [field: string]: any };
-  names: { [field: string]: any };
-  schema: { [field: string]: any };
+  names: Names;
+  schema: Schema;
   transitions: Transition[];
   operations: Operations;
   editmeta: Editmeta;
@@ -136,14 +152,10 @@ interface Changelog {
 
 interface History {
   id: string;
-  author: { [field: string]: any };
+  author: User;
   created: string;
-  items: { [field: string]: any }[];
-  historyMetadata: { [field: string]: any };
-}
-
-interface Editmeta {
-  fields: { [field: string]: any };
+  items: Item[];
+  historyMetadata: HistoryMetadata;
 }
 
 interface Operations {
@@ -152,17 +164,17 @@ interface Operations {
 
 interface LinkGroup {
   id: string;
-  styleClass: string;
-  header: { [field: string]: any };
+  styleClass?: string;
+  header?: { [field: string]: any };
   weight: number;
-  links: { [field: string]: any }[];
-  groups: any[];
+  links: Link[];
+  groups: Group[];
 }
 
 interface Transition {
   id: string;
   name: string;
-  to: To;
+  to: Status;
   hasScreen: boolean;
   isGlobal: boolean;
   isInitial: boolean;
@@ -171,15 +183,6 @@ interface Transition {
   fields: { [field: string]: any };
   expand: string;
   looped: boolean;
-}
-
-interface To {
-  self: string;
-  description: string;
-  iconUrl: string;
-  name: string;
-  id: string;
-  statusCategory: { [field: string]: any };
 }
 
 interface RenderedFields {
@@ -219,7 +222,7 @@ interface Group {
   name: string;
 }
 
-interface Fields {
+export interface Fields {
   summary: string;
   project: Project;
   status?: Status;
@@ -237,6 +240,7 @@ interface Fields {
   worklog?: Worklog[];
   updated?: number;
   timetracking?: Timetracking;
+  versionedRepresentations?: VersionedRepresentations;
 }
 
 interface Timetracking {
@@ -250,8 +254,8 @@ interface Timetracking {
 
 interface Worklog {
   self: string;
-  author: Watcher;
-  updateAuthor: Watcher;
+  author: User;
+  updateAuthor: User;
   comment: DocNode;
   updated: string;
   visibility: Visibility;
@@ -272,9 +276,9 @@ interface Issuelink {
 interface Comment {
   self: string;
   id: string;
-  author: Watcher;
+  author: User;
   body: DocNode;
-  updateAuthor: Watcher;
+  updateAuthor: User;
   created: string;
   updated: string;
   visibility: Visibility;
@@ -321,12 +325,6 @@ interface OutwardIssue {
   self: string;
   fields: Fields;
 }
-
-interface Status {
-  iconUrl: string;
-  name: string;
-}
-
 interface Type {
   id: string;
   name: string;
@@ -351,11 +349,13 @@ interface User {
   self: string;
   key: string;
   accountId: string;
-  accountType: string;
+  accountType?: string;
   name: string;
   avatarUrls: AvatarUrls;
   displayName: string;
-  active: boolean;
+  active?: boolean;
+  emailAddress?: string;
+  timeZone?: string;
 }
 
 interface AvatarUrls {
@@ -377,4 +377,119 @@ interface Watcher {
   accountId: string;
   displayName: string;
   active: boolean;
+}
+
+interface Schema {
+  assignee: User;
+  status: Status;
+}
+
+interface Names {
+  assignee: string;
+  status: string;
+}
+
+interface VersionedRepresentations {
+  assignee: Version<User>;
+  status: Version<Status>;
+}
+
+interface Version<type = any> {
+  [version: string]: type;
+}
+
+interface Changelog {
+  startAt: number;
+  maxResults: number;
+  total: number;
+  histories: History[];
+}
+
+interface History {
+  id: string;
+  author: User;
+  created: string;
+  items: Item[];
+}
+
+interface Item {
+  field: string;
+  fieldtype: string;
+  fieldId?: string;
+  from?: any;
+  fromString?: any;
+  to: string;
+  toString: string;
+  tmpFromAccountId?: any;
+  tmpToAccountId?: string;
+}
+
+interface AvatarUrls {
+  "48x48": string;
+  "24x24": string;
+  "16x16": string;
+  "32x32": string;
+}
+
+interface Editmeta {
+  fields: Fields;
+}
+
+interface Header {
+  id: string;
+  styleClass?: string;
+  iconClass?: string;
+  label: string;
+  title?: string;
+}
+
+interface Group {
+  id: string;
+  weight?: number;
+  links: Link[];
+  groups: Group[];
+}
+
+interface Link {
+  id: string;
+  styleClass?: string;
+  iconClass?: string;
+  label: string;
+  title?: string;
+  href: string;
+  weight?: number;
+}
+
+interface Transition {
+  id: string;
+  name: string;
+  to: Status;
+  hasScreen: boolean;
+  isGlobal: boolean;
+  isInitial: boolean;
+  isAvailable: boolean;
+  isConditional: boolean;
+  isLooped: boolean;
+}
+
+interface Status {
+  self?: string;
+  description?: string;
+  iconUrl?: string;
+  name: string;
+  id: string;
+  statusCategory?: StatusCategory;
+}
+
+interface StatusCategory {
+  self: string;
+  id: number;
+  key: string;
+  colorName: string;
+  name: string;
+}
+
+interface RenderedFields {
+  assignee?: any;
+  status?: any;
 }

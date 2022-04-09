@@ -1,4 +1,4 @@
-import { PageBean } from "./CrudType";
+import { PageBean } from "JiraApi";
 import { JiraApi } from "./JiraApi";
 import { JiraCrudType } from "./JiraCrudType";
 import { ScreenTab } from "./ScreenTab";

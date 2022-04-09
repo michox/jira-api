@@ -1,5 +1,5 @@
-import { AppProperty } from "./AppProperty";
-import { PageBean } from "./CrudType";
+import { AppProperty } from "./AppProperty/AppProperty.connect";
+import { PageBean } from "JiraApi";
 import { JiraApi } from "./JiraApi";
 import Panel from "@atlaskit/panel";
 import SectionMessage from "@atlaskit/section-message";

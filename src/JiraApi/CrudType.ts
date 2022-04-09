@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import "regenerator-runtime/runtime";
+
 
 export interface CrudState<BodyType = any> {
   body: BodyType;
@@ -147,6 +146,14 @@ export abstract class CrudType<BodyType extends { id?: string | number } = any, 
     >;
   }
 
+  async find<ResponseType = PageBean<BodyType>>(query:string) {
+    //@ts-ignore override response type of fetch function
+    return this.fetchFunction(this._defaultRestAddress + "?query=" + query, {}, "GET") as Promise<
+      //@ts-ignore override response type of fetch function
+      CrudState<ResponseType>
+    >;
+  }
+
   async readByName(name: string) {
     let response = await this.readAll();
     let responsePage = response.body;
@@ -172,21 +179,3 @@ export abstract class CrudType<BodyType extends { id?: string | number } = any, 
   }
 }
 
-export declare type CrudHookInitParam<T extends CrudType> = {
-  createProps?: Parameters<T["create"]>[0];
-  readProps?: Parameters<T["read"]>[0];
-};
-
-export function useCrudHook<T extends CrudType>(object: T, initParam?: CrudHookInitParam<T>) {
-  [object._state, object.setState] = useState(object._state);
-
-  useEffect(() => {
-    if (initParam && initParam.hasOwnProperty("readProps")) {
-      object.read(initParam.readProps);
-    } else if (initParam && initParam.hasOwnProperty("createProps")) {
-      object.create(initParam.createProps);
-    }
-  }, []);
-
-  return object;
-}

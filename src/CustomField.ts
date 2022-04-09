@@ -1,8 +1,8 @@
-import { PageBean } from "./CrudType";
+import { PageBean } from "JiraApi";
 import { DefaultCustomFieldValue } from "./CustomFieldDefaultValue";
 import { CustomFieldOption, createOrUpdateOptions } from "./CustomFieldOption";
-import {JiraApi} from "./JiraApi";
-import {JiraCrudType} from "./JiraCrudType";
+import { JiraApi } from "./JiraApi";
+import { JiraCrudType } from "./JiraCrudType";
 
 export declare type TypeAndSearcher =
   | { name: "cascadingselect"; abrSearcher: "cascadingselectsearcher" }
@@ -106,7 +106,7 @@ interface AvatarUrls {}
 
 export class CustomField extends JiraCrudType<CustomFieldDetails, CustomFieldCreateRequest> {
   constructor() {
-    super("/rest/api/3/field", );
+    super("/rest/api/3/field");
   }
 
   async createOrUpdate(body: CustomFieldCreateProps) {
@@ -125,7 +125,7 @@ export class CustomField extends JiraCrudType<CustomFieldDetails, CustomFieldCre
       let { requestBody, options, contextId, defaultFieldValue } = this.preprocessRequestBody(
         body as CustomFieldCreateProps
       );
-      await super.create(requestBody);
+      await super.create(requestBody as CustomFieldCreateRequest);
 
       if (options) {
         contextId = contextId || (await this.getDefaultContextId());
@@ -146,9 +146,7 @@ export class CustomField extends JiraCrudType<CustomFieldDetails, CustomFieldCre
     return this;
   }
 
-
-
-  async update(body: CustomFieldCreateProps) {
+  async update(body: Partial<CustomFieldCreateProps>) {
     let {
       requestBody: { type, ...rest },
       options,
@@ -169,9 +167,9 @@ export class CustomField extends JiraCrudType<CustomFieldDetails, CustomFieldCre
     return this;
   }
 
-  async read(){
+  async read() {
     let state = await JiraApi<PageBean<CustomFieldDetails>>(`${this._defaultRestAddress}/search?id=${this.body.id}`);
-    let body = state.body.values.find(v => v.id === this.body.id) as CustomFieldDetails;
+    let body = state.body.values.find((v) => v.id === this.body.id) as CustomFieldDetails;
     if (body == undefined) {
       this.state.error = { errorMessages: [`field with name ${name} not found`] };
       this.state.status = "error";
@@ -226,12 +224,12 @@ export class CustomField extends JiraCrudType<CustomFieldDetails, CustomFieldCre
     return Promise.all(unusedFields.map((field) => new CustomField().WithId(field.id).delete()));
   }
 
-  private preprocessRequestBody(body: CustomFieldCreateProps) {
+  private preprocessRequestBody(body: Partial<CustomFieldCreateProps>) {
     let { typeAndSearcher, options, contextId, defaultFieldValue, ...restBody } = body;
-    let type = "com.atlassian.jira.plugin.system.customfieldtypes:" + typeAndSearcher.name;
-    let searcherKey = "com.atlassian.jira.plugin.system.customfieldtypes:" + typeAndSearcher.abrSearcher;
+    let type = typeAndSearcher && "com.atlassian.jira.plugin.system.customfieldtypes:" + typeAndSearcher.name;
+    let searcherKey =
+      typeAndSearcher && "com.atlassian.jira.plugin.system.customfieldtypes:" + typeAndSearcher.abrSearcher;
     let requestBody = { ...restBody, type, searcherKey };
     return { requestBody, options, contextId, defaultFieldValue };
   }
 }
-
