@@ -1,8 +1,10 @@
 import { ConnectResponse, ConnectError } from "./JiraApiTypes";
 export * from './JiraApiTypes'
+export * from './CrudType'
+
 
 declare var AP: any;
-import { CrudState } from "../CrudType";
+import { CrudState } from "./CrudType";
 
 export async function JiraApi<BodyType = any>(
   url: string, //required if not provided in base argument

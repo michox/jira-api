@@ -1,0 +1,14 @@
+{
+  "name": "app-property",
+  "version": "0.0.1",
+  "description": "handle AppProperty for Connect and Forge",
+  "main": "AppProperty.connect.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "michox",
+  "license": "ISC",
+  "dependencies": {
+    "@forge/api": "^2.6.1"
+  }
+}

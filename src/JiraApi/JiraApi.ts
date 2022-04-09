@@ -1,9 +1,10 @@
 import { ConnectResponse, ConnectError, JiraApiOptions } from "./JiraApiTypes";
 import { RequestPromiseAPI  } from "request-promise-native";
 export * from './JiraApiTypes'
+export * from './CrudType'
 declare const httpClient: RequestPromiseAPI;
 
-import { CrudState } from "../CrudType";
+import { CrudState } from "./CrudType";
 
 
 export async function JiraApi<BodyType = any>(

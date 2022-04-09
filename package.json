@@ -41,7 +41,7 @@
     "@atlaskit/adf-utils": "^16.0.0",
     "@atlaskit/panel": "^0.4.7",
     "@atlaskit/section-message": "^6.1.8",
-    "jiraapi": "file:src/JiraApi",
+    "JiraApi": "file:src/JiraApi",
     "react": "^16.8.0",
     "react-query": "^3.34.16",
     "regenerator-runtime": "^0.13.9",
