@@ -1,7 +1,7 @@
-import { PageBean } from "JiraApi";
+import { PageBean } from "atlassian-request";
 import { DefaultCustomFieldValue } from "./CustomFieldDefaultValue";
 import { CustomFieldOption, createOrUpdateOptions } from "./CustomFieldOption";
-import { JiraApi } from "./JiraApi";
+import { AtlassianRequest } from "atlassian-request";
 import { JiraCrudType } from "./JiraCrudType";
 
 export declare type TypeAndSearcher =
@@ -168,7 +168,7 @@ export class CustomField extends JiraCrudType<CustomFieldDetails, CustomFieldCre
   }
 
   async read() {
-    let state = await JiraApi<PageBean<CustomFieldDetails>>(`${this._defaultRestAddress}/search?id=${this.body.id}`);
+    let state = await AtlassianRequest<PageBean<CustomFieldDetails>>(`${this._defaultRestAddress}/search?id=${this.body.id}`);
     let body = state.body.values.find((v) => v.id === this.body.id) as CustomFieldDetails;
     if (body == undefined) {
       this.state.error = { errorMessages: [`field with name ${name} not found`] };
@@ -181,7 +181,7 @@ export class CustomField extends JiraCrudType<CustomFieldDetails, CustomFieldCre
   }
 
   async readFieldByName(name: string, type?: TypeAndSearcher["name"]) {
-    let state = await JiraApi<PageBean<CustomFieldDetails>>(
+    let state = await AtlassianRequest<PageBean<CustomFieldDetails>>(
       this._defaultRestAddress + `/search?query=${name}&expand=lastUsed&orderBy=lastUsed`
     );
     let body = state.body.values.find(
@@ -198,18 +198,18 @@ export class CustomField extends JiraCrudType<CustomFieldDetails, CustomFieldCre
   }
 
   private async getDefaultContextId(): Promise<string | undefined> {
-    return await JiraApi<PageBean<CustomFieldContext>>(this._defaultRestAddress + "/" + this.body.id + "/context").then(
+    return await AtlassianRequest<PageBean<CustomFieldContext>>(this._defaultRestAddress + "/" + this.body.id + "/context").then(
       ({ body }) => body.values[0].id
     );
   }
 
   private async setDefaultFieldValue(defaultFieldValue: DefaultCustomFieldValue) {
-    await JiraApi(this._defaultRestAddress + `/${this.body.id}/context/defaultValue`, defaultFieldValue, "PUT");
+    await AtlassianRequest(this._defaultRestAddress + `/${this.body.id}/context/defaultValue`, defaultFieldValue, "PUT");
   }
 
   static async deleteAllUnused() {
     let getPage = async (startAt = 0) => {
-      return JiraApi<PageBean<CustomFieldSearch>>(
+      return AtlassianRequest<PageBean<CustomFieldSearch>>(
         `/rest/api/3/field/search?expand=screensCount,isLocked&startAt=` + startAt
       ).then(({ body }) => body);
     };

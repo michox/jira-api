@@ -1,6 +1,6 @@
 import { JiraCrudType } from "./JiraCrudType";
-import { JiraApi } from "./JiraApi";
-import { PageBean } from "JiraApi";
+import { AtlassianRequest } from "atlassian-request";
+import { PageBean } from "atlassian-request";
 
 export interface WorkflowStatus {
   id: string | number;
@@ -160,7 +160,7 @@ export class Workflow extends JiraCrudType<WorkflowDetails, WorkflowCreateReques
   }
 
   async create(requestBody: WorkflowCreateRequest) {
-    let state = await JiraApi<WorkflowId>(this._defaultRestAddress, requestBody, "POST");
+    let state = await AtlassianRequest<WorkflowId>(this._defaultRestAddress, requestBody, "POST");
     this.state = { ...state, body: { ...requestBody, id: state.body } };
 
     return this;
@@ -184,7 +184,7 @@ export class Workflow extends JiraCrudType<WorkflowDetails, WorkflowCreateReques
 
     async function getWorkflowPage(startAt = 0): Promise<PageBean<WorkflowDetails>> {
       return (
-        await JiraApi(
+        await AtlassianRequest(
           `/rest/api/3/workflow/search?expand=statuses.properties,transitions.rules,transitions.properties&startAt=${startAt}${name}`
         )
       ).body;
@@ -201,7 +201,7 @@ export class Workflow extends JiraCrudType<WorkflowDetails, WorkflowCreateReques
 
   static async deleteAllUnused() {
     let getPage = async (startAt = 0) => {
-      return JiraApi<PageBean<{ id: number; schemes: any[] }>>(
+      return AtlassianRequest<PageBean<{ id: number; schemes: any[] }>>(
         `/rest/api/3/workflow/search?expand=schemes&startAt=` + startAt
       ).then(({ body }) => body);
     };

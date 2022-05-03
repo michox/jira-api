@@ -1,12 +1,12 @@
-import { ConnectResponse, ConnectError } from "./JiraApiTypes";
-export * from './JiraApiTypes'
+import { ConnectResponse, ConnectError } from "./AtlassianRequestTypes";
+export * from './AtlassianRequestTypes'
 export * from './CrudType'
 
 
 declare var AP: any;
 import { CrudState } from "./CrudType";
 
-export async function JiraApi<BodyType = any>(
+export async function AtlassianRequest<BodyType = any>(
   url: string, //required if not provided in base argument
   body?: {} | string,
   method: "POST" | "PUT" | "GET" | "DELETE" = "GET",
@@ -47,24 +47,24 @@ export async function JiraApi<BodyType = any>(
     switch (method) {
       case "DELETE": {
         AP.request(url, { ...connectOptions, type: "GET" }).then(
-          (r: ConnectResponse) => JiraApi(url, body, method, headers, params).then((r) => (response = r)), //retry if still exists
+          (r: ConnectResponse) => AtlassianRequest(url, body, method, headers, params).then((r) => (response = r)), //retry if still exists
           (err: ConnectError) => {
             if (err.xhr.status === 404 || err.xhr.status === 400) {
               // does not exist anymore, assume deletion worked despite server error
               response.status = "ok";
               response.statusCode = 204;
             } else
-              retryCount < 0 && JiraApi(url, body, method, headers, params, --retryCount).then((r) => (response = r)); //assuming a 405 error or another 500 error. Try again and hope for the best. As we don't need to return anything from a delete command this should not break anything
+              retryCount < 0 && AtlassianRequest(url, body, method, headers, params, --retryCount).then((r) => (response = r)); //assuming a 405 error or another 500 error. Try again and hope for the best. As we don't need to return anything from a delete command this should not break anything
           }
         );
         break;
       }
       case "PUT": {
-        retryCount < 0 && (response = await JiraApi(url, body, method, headers, params, --retryCount));
+        retryCount < 0 && (response = await AtlassianRequest(url, body, method, headers, params, --retryCount));
         break;
       }
       case "GET": {
-        retryCount < 0 && (response = await JiraApi(url, body, method, headers, params, --retryCount));
+        retryCount < 0 && (response = await AtlassianRequest(url, body, method, headers, params, --retryCount));
         break;
       }
       case "POST": {

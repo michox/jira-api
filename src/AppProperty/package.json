@@ -9,6 +9,7 @@
   "author": "michox",
   "license": "ISC",
   "dependencies": {
-    "@forge/api": "^2.6.1"
+    "@forge/api": "^2.6.1",
+    "atlassian-request":"../AtlassianRequest"
   }
 }

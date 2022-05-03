@@ -1,6 +1,6 @@
 import { AppProperty } from "./AppProperty/AppProperty.connect";
-import { PageBean } from "JiraApi";
-import { JiraApi } from "./JiraApi";
+import { PageBean } from "atlassian-request";
+import { AtlassianRequest } from "atlassian-request";
 import Panel from "@atlaskit/panel";
 import SectionMessage from "@atlaskit/section-message";
 import { useQuery, QueryClient, QueryClientProvider, useQueryClient } from "react-query";
@@ -46,7 +46,7 @@ export class WorkflowError extends AppProperty<Record<string, WorkflowErrorDetai
   }
 
   async readPostFunctionId(connectRuleKey: string, workflowName: string, transitionId: number) {
-    let pageResponse = await JiraApi<PageBean<WorkflowRuleConfiguration>>(
+    let pageResponse = await AtlassianRequest<PageBean<WorkflowRuleConfiguration>>(
       `/rest/api/3/workflow/rule/config?expand=transition&types=postfunction&workflowNames=${workflowName}&keys=${connectRuleKey}`
     );
     let postFunction = pageResponse?.body.values

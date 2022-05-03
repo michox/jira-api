@@ -1,6 +1,6 @@
 import {JiraCrudType} from "./JiraCrudType";
-import {JiraApi} from "./JiraApi";
-import { PageBean } from "JiraApi";
+import {AtlassianRequest} from "atlassian-request";
+import { PageBean } from "atlassian-request";
 
 export interface IssueTypeScreenSchemeDetails {
   id: string | number;
@@ -36,7 +36,7 @@ export class IssueTypeScreenScheme extends JiraCrudType<IssueTypeScreenSchemeDet
   }
 
   async read() {
-    let state = await JiraApi(`/rest/api/3/issuetypescreenscheme?id=${this.body.id}`);
+    let state = await AtlassianRequest(`/rest/api/3/issuetypescreenscheme?id=${this.body.id}`);
     this._state = { ...state, body: state.body.values[0] }; //return is a page bean but we specified an id so the first value will definitely be the item we are looking for
     this.body.issueTypeMappings = (await IssueTypeScreenScheme.getMapping([+this.body.id])).values.map(
       ({ issueTypeScreenSchemeId, ...rest }) => {
@@ -48,7 +48,7 @@ export class IssueTypeScreenScheme extends JiraCrudType<IssueTypeScreenSchemeDet
 
   static async deleteAllUnused() {
     let getPage = async (startAt = 0) => {
-      return JiraApi<PageBean<{id: number, projects:PageBean<{id: number}>}>>(
+      return AtlassianRequest<PageBean<{id: number, projects:PageBean<{id: number}>}>>(
         `/rest/api/3/issuetypescreenscheme?expand=projects&startAt=` + startAt
       ).then(({ body }) => body);
     };
@@ -67,7 +67,7 @@ export class IssueTypeScreenScheme extends JiraCrudType<IssueTypeScreenSchemeDet
     let query = "?";
     issueTypeScreenSchemeIds.forEach((id) => (query += `issueTypeScreenSchemeId=${id}&`));
     query = query.slice(0, query.length - 1);
-    return (await JiraApi(`/rest/api/3/issuetypescreenscheme/mapping${query}`)).body;
+    return (await AtlassianRequest(`/rest/api/3/issuetypescreenscheme/mapping${query}`)).body;
   }
 
 }

@@ -1,6 +1,6 @@
 import { JiraCrudType } from "./JiraCrudType";
-import { JiraApi } from "./JiraApi";
-import { CrudState, PageBean } from "JiraApi";
+import { AtlassianRequest } from "atlassian-request";
+import { CrudState, PageBean } from "atlassian-request";
 
 interface IssueTypeMappings {
   [issueTypeId: number | string]: string;
@@ -50,14 +50,14 @@ export class WorkflowScheme extends JiraCrudType<WorkflowSchemeDetails, Workflow
       query = query.slice(0, query.length - 1);
     }
 
-    return JiraApi(`/rest/api/3/workflowscheme${query}`).then((requestState: CrudState) => {
+    return AtlassianRequest(`/rest/api/3/workflowscheme${query}`).then((requestState: CrudState) => {
       return requestState.body;
     });
   };
 
   static async deleteAllUnused() {
     let getPage = async (startAt = 0) => {
-      return JiraApi<PageBean<{ id: number }>>(`/rest/api/3/workflowscheme?startAt=` + startAt).then(
+      return AtlassianRequest<PageBean<{ id: number }>>(`/rest/api/3/workflowscheme?startAt=` + startAt).then(
         ({ body }) => body
       );
     };

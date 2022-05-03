@@ -1,5 +1,5 @@
-import { PageBean } from "JiraApi";
-import {JiraApi} from "./JiraApi";
+import { PageBean } from "atlassian-request";
+import {AtlassianRequest} from "atlassian-request";
 import {JiraCrudType} from "./JiraCrudType";
 
 export interface CustomFieldOptionsCreateRequest {
@@ -52,7 +52,7 @@ export class CustomFieldOption extends JiraCrudType<CustomFieldOptionsDetails, C
         position: "Last",
       };
     }
-    JiraApi(this._defaultRestAddress + "/move", props, "PUT");
+    AtlassianRequest(this._defaultRestAddress + "/move", props, "PUT");
   }
 }
 export async function createOrUpdateOptions(
@@ -90,7 +90,7 @@ async function sortOptionsByExistence(
   optionsInput: (string | { value: string; oldValue: string })[],
   defaultRestAddress: string
 ) {
-  let existingOptions = await JiraApi<PageBean<CustomFieldOptionDetails>>(defaultRestAddress + "?maxResults=1000").then(
+  let existingOptions = await AtlassianRequest<PageBean<CustomFieldOptionDetails>>(defaultRestAddress + "?maxResults=1000").then(
     ({ body }) => body.values
   );
 

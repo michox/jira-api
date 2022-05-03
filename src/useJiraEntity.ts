@@ -1,4 +1,4 @@
-import { CrudType } from "JiraApi/CrudType";
+import { CrudType } from "AtlassianRequest/CrudType";
 import { JiraCrudType } from "JiraCrudType";
 import React, { useState, useEffect } from "react";
 import "regenerator-runtime/runtime";

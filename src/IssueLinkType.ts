@@ -1,4 +1,4 @@
-import {JiraApi} from "./JiraApi";
+import {AtlassianRequest} from "atlassian-request";
 import {JiraCrudType} from "./JiraCrudType";
 
 export interface IssueLinkTypeCreateRequest {
@@ -47,6 +47,6 @@ export class IssueLinkType extends JiraCrudType<IssueLinkTypeDetails> {
   }
 
   static async readAll() {
-    return (await JiraApi<{ issueLinkTypes: IssueLinkTypeDetails[] }>(`/rest/api/3/issueLinkType`)).body.issueLinkTypes;
+    return (await AtlassianRequest<{ issueLinkTypes: IssueLinkTypeDetails[] }>(`/rest/api/3/issueLinkType`)).body.issueLinkTypes;
   }
 }

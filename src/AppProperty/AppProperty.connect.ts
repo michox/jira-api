@@ -1,4 +1,4 @@
-import { CrudState, JiraApi } from "../JiraApi";
+import { CrudState, AtlassianRequest } from "atlassian-request";
 import { JiraCrudType } from "../JiraCrudType";
 declare var addonKey: string; //available via the react-layout.hbs in the views folder
 
@@ -10,8 +10,8 @@ interface ConnectProperty<type = any> {
 
 export class AppProperty<P = any, D extends Record<string, JiraCrudType> | JiraCrudType | unknown = unknown> {
   //<P extends Record<string, Object>, D extends Record<string, JiraCrudType> | unknown = unknown> {
-  constructor(protected propertyKey: string, body?: P ) {
-    this.state = { body: body || Object(), status: "pending" };
+  constructor(protected propertyKey: string, initialBody?: P) {
+    this.state = { body: initialBody || Object(), status: "pending" };
   }
   details: D = Object();
   get body() {
@@ -30,24 +30,21 @@ export class AppProperty<P = any, D extends Record<string, JiraCrudType> | JiraC
   state: CrudState<P>;
 
   async read() {
-    let response = await JiraApi<ConnectProperty<P>>(
+    this.state = await AtlassianRequest<ConnectProperty<P>>(
       `/rest/atlassian-connect/1/addons/${addonKey}/properties/${this.propertyKey}`
-    );
-    if (response.body?.value) {
-      this.body = response.body.value;
-    }
+    ).then((response) => ({ ...response, body: response.body.value }));
     return this;
   }
 
   async update(body = this.body) {
-    await JiraApi<ConnectProperty<P>>(
+    await AtlassianRequest<ConnectProperty<P>>(
       `/rest/atlassian-connect/1/addons/${addonKey}/properties/${this.propertyKey}.backup`,
       this.body,
       "PUT"
     );
     body || console.warn(`updating body of ${this.propertyKey} but the passed value is undefined!`);
     this.body = body;
-    await JiraApi<ConnectProperty<P>>(
+    await AtlassianRequest<ConnectProperty<P>>(
       `/rest/atlassian-connect/1/addons/${addonKey}/properties/${this.propertyKey}`,
       body,
       "PUT"
@@ -57,22 +54,16 @@ export class AppProperty<P = any, D extends Record<string, JiraCrudType> | JiraC
 
   async delete() {
     this.body = {} as P;
-    return Promise.all([
-      JiraApi<ConnectProperty<P>>(
-        `/rest/atlassian-connect/1/addons/${addonKey}/properties/${this.propertyKey}.backup`,
-        {},
-        "DELETE"
-      ),
-      JiraApi<ConnectProperty<P>>(
-        `/rest/atlassian-connect/1/addons/${addonKey}/properties/${this.propertyKey}`,
-        {},
-        "DELETE"
-      ),
-    ]);
+    await AtlassianRequest<ConnectProperty<P>>(
+      `/rest/atlassian-connect/1/addons/${addonKey}/properties/${this.propertyKey}`,
+      {},
+      "DELETE"
+    );
+    return this;
   }
 
   static async getProperties() {
-    return await JiraApi(`/rest/atlassian-connect/1/addons/${addonKey}/properties`, {}, "GET");
+    return await AtlassianRequest(`/rest/atlassian-connect/1/addons/${addonKey}/properties`, {}, "GET");
   }
 
   // async readDetails(detailsObject: D) {

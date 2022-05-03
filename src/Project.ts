@@ -1,6 +1,6 @@
 import { JiraCrudType } from "./JiraCrudType";
-import { JiraApi } from "./JiraApi";
-import { CrudState } from "JiraApi";
+import { AtlassianRequest } from "atlassian-request";
+import { CrudState } from "atlassian-request";
 import { WorkflowScheme, WorkflowSchemeDetails } from "./WorkflowScheme";
 import { FieldConfigurationScheme, FieldConfigurationSchemeDetails } from "./FieldConfigurationScheme";
 
@@ -273,19 +273,19 @@ export class Project extends JiraCrudType<ProjectDetails, ProjectCreateRequest> 
   }
 
   archive = async () => {
-    return JiraApi(`${this._defaultRestAddress}/${this.body.id}/archive`, {}, "POST");
+    return AtlassianRequest(`${this._defaultRestAddress}/${this.body.id}/archive`, {}, "POST");
   };
 
   setEmail = async (emailAddress: string) => {
-    return JiraApi(`${this._defaultRestAddress}/${this.body.id}/email`, { emailAddress: emailAddress }, "PUT");
+    return AtlassianRequest(`${this._defaultRestAddress}/${this.body.id}/email`, { emailAddress: emailAddress }, "PUT");
   };
 
   setAvatar = async (avatarId: number) => {
-    return JiraApi(`${this._defaultRestAddress}/${this.body.id}/avatar`, { id: avatarId }, "PUT");
+    return AtlassianRequest(`${this._defaultRestAddress}/${this.body.id}/avatar`, { id: avatarId }, "PUT");
   };
 
   loadAvatar = async (avatarFilePath: string) => {
-    return JiraApi(
+    return AtlassianRequest(
       `${this._defaultRestAddress}/${this.body.id}/avatar2`,
       avatarFilePath,
       "POST",
@@ -300,7 +300,7 @@ export class Project extends JiraCrudType<ProjectDetails, ProjectCreateRequest> 
    * @returns the original key if it is valid, otherwise a new valid key usually by adding a sequence number. Undefined if no key could be generated
    */
   static async validKey(key: string): Promise<string> {
-    return (await JiraApi(`/rest/api/3/projectvalidate/validProjectKey?key=${key}`)).body;
+    return (await AtlassianRequest(`/rest/api/3/projectvalidate/validProjectKey?key=${key}`)).body;
   }
   /**
    *
@@ -308,17 +308,17 @@ export class Project extends JiraCrudType<ProjectDetails, ProjectCreateRequest> 
    * @returns the original name if it is valid, otherwise a new valid name usually by adding a sequence number. Undefined if no name could be generated
    */
   static async validName(name: string): Promise<string> {
-    return (await JiraApi(`/rest/api/3/projectvalidate/validProjectName?name=${name}`)).body;
+    return (await AtlassianRequest(`/rest/api/3/projectvalidate/validProjectName?name=${name}`)).body;
   }
 
   // readProperty = async (propertykey: string) => {
-  //   JiraApi(`${this._defaultRestAddress}/${this.body.id}/${propertykey}`).then((requestState: CrudState) => {
+  //   AtlassianRequest(`${this._defaultRestAddress}/${this.body.id}/${propertykey}`).then((requestState: CrudState) => {
   //     this._state.body[propertykey] = requestState.body;
   //   });
   // };
 
   readIssueTypeScreenSchemes = async () => {
-    return JiraApi(`/rest/api/3/issuetypescreenscheme/project?projectId=${this.body.id}`).then(
+    return AtlassianRequest(`/rest/api/3/issuetypescreenscheme/project?projectId=${this.body.id}`).then(
       (requestState: CrudState) => {
         this._state.body.issueTypeScreenScheme = requestState.body.values[0]
           .issueTypeScreenScheme as IssueTypeScreenSchemeResponse;
@@ -328,7 +328,7 @@ export class Project extends JiraCrudType<ProjectDetails, ProjectCreateRequest> 
   };
 
   readIssueTypeSchemes = async () => {
-    return JiraApi(`/rest/api/3/issuetypescheme/project?projectId=${this.body.id}`).then((requestState: CrudState) => {
+    return AtlassianRequest(`/rest/api/3/issuetypescheme/project?projectId=${this.body.id}`).then((requestState: CrudState) => {
       this._state.body.issueTypeScheme = requestState.body.values[0].issueTypeScheme as IssueTypeSchemeResponse;
       return this;
     });

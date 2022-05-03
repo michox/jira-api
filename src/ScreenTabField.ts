@@ -1,4 +1,4 @@
-import { JiraApi } from "./JiraApi";
+import { AtlassianRequest } from "atlassian-request";
 import { JiraCrudType } from "./JiraCrudType";
 
 interface ScreenTabFieldCreateRequest {
@@ -15,6 +15,6 @@ export class ScreenTabField extends JiraCrudType<ScreenTabFieldDetails, ScreenTa
   }
 
   async move(arg: { after: string } | { position: "Earlier" | "Later" | "First" | "Last" }) {
-    await JiraApi(this._defaultRestAddress + "/" + this.body.id + "/move", arg, "POST");
+    await AtlassianRequest(this._defaultRestAddress + "/" + this.body.id + "/move", arg, "POST");
   }
 }

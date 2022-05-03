@@ -1,4 +1,4 @@
-import { JiraApi } from "./JiraApi";
+import { AtlassianRequest } from "atlassian-request";
 import { JiraCrudType } from "./JiraCrudType";
 
 export interface StatusDetails {
@@ -41,6 +41,6 @@ export class Status extends JiraCrudType<StatusDetails> {
   }
 
   static readAll() {
-    return JiraApi<Array<StatusDetails>>("/rest/api/3/status");
+    return AtlassianRequest<Array<StatusDetails>>("/rest/api/3/status");
   }
 }

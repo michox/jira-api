@@ -1,5 +1,5 @@
 import { DocNode } from "@atlaskit/adf-utils/dist/types/validator/entry";
-import { encodeObject, JiraApi } from "./JiraApi";
+import { encodeObject, AtlassianRequest } from "atlassian-request";
 import { JiraCrudType } from "./JiraCrudType";
 
 export class Issue extends JiraCrudType<IssueBean, IssueCreateRequest> {
@@ -8,10 +8,10 @@ export class Issue extends JiraCrudType<IssueBean, IssueCreateRequest> {
   }
 
   async transition(props: TransitionRequest) {
-    await JiraApi(`${this._defaultRestAddress}/${this.body.id}/transitions`, props, "POST");
+    await AtlassianRequest(`${this._defaultRestAddress}/${this.body.id}/transitions`, props, "POST");
   }
   async sendNotification(props: NotificationRequest) {
-    await JiraApi(`${this._defaultRestAddress}/${this.body.id}/notify`, props, "POST");
+    await AtlassianRequest(`${this._defaultRestAddress}/${this.body.id}/notify`, props, "POST");
   }
   async update(data?: IssueEditRequest): Promise<this> {
     return super.update(data?.body, `${this._defaultRestAddress}/${this.body.id}?${encodeObject(data?.param)}`);
@@ -23,28 +23,48 @@ export class Issue extends JiraCrudType<IssueBean, IssueCreateRequest> {
     if (!this.body?.fields?.attachment?.length) {
       return Promise.resolve(undefined);
     }
-    return Promise.all(this.body?.fields?.attachment.map((attachment) => JiraApi(attachment.content)));
+    return Promise.all(this.body?.fields?.attachment.map((attachment) => AtlassianRequest(attachment.content)));
   }
 
   async getFields(field: string | string[]) {
-    let response = await JiraApi<IssueBean>(`${this._defaultRestAddress}/${this.body.id}?fields=-*all,${field}`);
+    let response = await AtlassianRequest<IssueBean>(`${this._defaultRestAddress}/${this.body.id}?fields=-*all,${field}`);
     this.state = { ...response, body: { ...this.body, fields: response.body.fields } };
     return this;
   }
 
   async getProperty(propertyKey: string) {
-    let response = await JiraApi(`${this._defaultRestAddress}/${this.body.id}/properties/${propertyKey}`);
-    this.state = { ...response, body: { ...this.body, properties: response.body } };
+    let response = await AtlassianRequest<IssueProperty>(
+      `${this._defaultRestAddress}/${this.body.id}/properties/${propertyKey}`
+    );
+    this.state = { ...response, body: { ...this.body, properties: { ...this.body.properties, [propertyKey]: response.body.value } } };
     return this;
   }
+  async getAllPropertyKeys() {
+    let response = await AtlassianRequest<IssuePropertyKeys>(`${this._defaultRestAddress}/${this.body.id}/properties/`);
+    this.state = {
+      ...response,
+      body: {
+        ...this.body,
+        properties: Object.fromEntries(response.body.keys.map((prop) => [prop.key.value, undefined])),
+      },
+    };
+    return this;
+  }
+  async getAllProperties() {
+    await this.getAllPropertyKeys();
+    await Promise.all(Object.keys(this.body.properties).map(propertyKey=>this.getProperty(propertyKey)))
+
+    return this;
+  }
+
   async setProperty(propertyKey: string, value: any) {
-    let response = await JiraApi(`${this._defaultRestAddress}/${this.body.id}/properties/${propertyKey}`, value, "PUT");
+    let response = await AtlassianRequest(`${this._defaultRestAddress}/${this.body.id}/properties/${propertyKey}`, value, "PUT");
     this.state = { ...response, body: { ...this.body, properties: { ...this.body.properties, [propertyKey]: value } } };
     return this;
   }
 
   async assign(accountId: string | null | -1 = null) {
-    let response = await JiraApi(`${this._defaultRestAddress}/${this.body.id}/assignee`, { accountId }, "PUT");
+    let response = await AtlassianRequest(`${this._defaultRestAddress}/${this.body.id}/assignee`, { accountId }, "PUT");
     this.state = { ...response, body: { ...this.body } };
     return this;
   }
@@ -493,3 +513,23 @@ interface RenderedFields {
   assignee?: any;
   status?: any;
 }
+
+interface IssuePropertyKeys {
+  keys: Key[];
+}
+
+interface Key {
+  self: Value;
+  key: Value;
+}
+
+interface Value {
+  value: string;
+}
+
+interface IssueProperty {
+  key: string;
+  value: Value;
+}
+
+interface Value {}

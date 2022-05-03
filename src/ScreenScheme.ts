@@ -1,6 +1,6 @@
 import { JiraCrudType } from "./JiraCrudType";
-import { JiraApi } from "./JiraApi";
-import { PageBean } from "JiraApi";
+import { AtlassianRequest } from "atlassian-request";
+import { PageBean } from "atlassian-request";
 
 export interface ScreenSchemeRequest {
   screens: {
@@ -23,13 +23,13 @@ export class ScreenScheme extends JiraCrudType<ScreenSchemeBody, ScreenSchemeReq
   }
 
   async read(id = this.body.id) {
-    let state = await JiraApi<PageBean<ScreenSchemeBody>>(`/rest/api/3/screenscheme?id=${id}`);
+    let state = await AtlassianRequest<PageBean<ScreenSchemeBody>>(`/rest/api/3/screenscheme?id=${id}`);
     this.state = { ...state, body: state.body.values[0] };
     return this;
   }
   static async deleteAllUnused() {
     let getPage = async (startAt = 0) => {
-      return JiraApi<PageBean<{ id: number; issueTypeScreenSchemes: PageBean<{ id: number }> }>>(
+      return AtlassianRequest<PageBean<{ id: number; issueTypeScreenSchemes: PageBean<{ id: number }> }>>(
         `/rest/api/3/screenscheme?expand=issueTypeScreenSchemes&startAt=` + startAt
       ).then(({ body }) => body);
     };

@@ -1,4 +1,4 @@
-import {JiraApi} from "./JiraApi";
+import {AtlassianRequest} from "atlassian-request";
 import {JiraCrudType} from "./JiraCrudType";
 
 type ProjectPermissions =
@@ -107,7 +107,7 @@ export class PermissionScheme extends JiraCrudType<PermissionSchemeDetails, Perm
     super("/rest/api/3/permissionscheme");
   }
   static readAll() {
-    return JiraApi<{ permissionSchemes: PermissionSchemeDetails[] }>("/rest/api/3/permissionscheme");
+    return AtlassianRequest<{ permissionSchemes: PermissionSchemeDetails[] }>("/rest/api/3/permissionscheme");
   }
 }
 

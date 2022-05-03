@@ -1,5 +1,5 @@
-import { PageBean } from "JiraApi";
-import { JiraApi } from "./JiraApi";
+import { PageBean } from "atlassian-request";
+import { AtlassianRequest } from "atlassian-request";
 import { JiraCrudType } from "./JiraCrudType";
 
 export interface FieldConfigurationSchemeCreateRequest {
@@ -31,7 +31,7 @@ export class FieldConfigurationScheme extends JiraCrudType<
   async read() {
     if (!this?.body?.id) {
     }
-    let state = await JiraApi<PageBean<FieldConfigurationSchemeDetails>>(
+    let state = await AtlassianRequest<PageBean<FieldConfigurationSchemeDetails>>(
       this._defaultRestAddress + "?id=" + this.body.id
     );
     this.setState({ ...state, body: state.body.values[0] });
@@ -39,7 +39,7 @@ export class FieldConfigurationScheme extends JiraCrudType<
   }
 
   async readByProject(projectId: string) {
-    let state = await JiraApi<
+    let state = await AtlassianRequest<
       PageBean<{ projectIds: string[]; fieldConfigurationScheme: FieldConfigurationSchemeDetails }>
     >(this._defaultRestAddress + `/project?projectId=` + projectId);
     this.setState({ ...state, body: state.body.values[0]?.fieldConfigurationScheme });
@@ -55,7 +55,7 @@ export class FieldConfigurationScheme extends JiraCrudType<
   }
 
   async assignToProject(projectId: string | number) {
-    await JiraApi(
+    await AtlassianRequest(
       this._defaultRestAddress + "/project",
       { fieldConfigurationSchemeId: this.body.id, projectId },
       "PUT"
@@ -67,7 +67,7 @@ export class FieldConfigurationScheme extends JiraCrudType<
       console.error("Field Configuration Scheme ID has not yet been defined.");
     }
     this.body.mapping = (
-      await JiraApi<PageBean<FieldConfigurationSchemeMapping & { fieldConfigurationSchemeId: string }>>(
+      await AtlassianRequest<PageBean<FieldConfigurationSchemeMapping & { fieldConfigurationSchemeId: string }>>(
         this._defaultRestAddress + "/mapping?maxResults=1000&fieldConfigurationSchemeId=" + this.body.id
       )
     ).body.values.map((item) => {
@@ -82,7 +82,7 @@ export class FieldConfigurationScheme extends JiraCrudType<
   async setMapping(mapping: FieldConfigurationSchemeMapping[]) {
     this.body.mapping = mapping;
     (
-      await JiraApi<PageBean<FieldConfigurationSchemeMapping>>(
+      await AtlassianRequest<PageBean<FieldConfigurationSchemeMapping>>(
         this._defaultRestAddress + "/" + this.body.id + "/mapping",
         { mappings: mapping },
         "PUT"
@@ -100,7 +100,7 @@ export class FieldConfigurationScheme extends JiraCrudType<
   }
   static async deleteAllUnused() {
     let getPage = async (startAt = 0) => {
-      return JiraApi<PageBean<{ id: number }>>(`/rest/api/3/fieldconfigurationscheme?startAt=` + startAt).then(
+      return AtlassianRequest<PageBean<{ id: number }>>(`/rest/api/3/fieldconfigurationscheme?startAt=` + startAt).then(
         ({ body }) => body
       );
     };

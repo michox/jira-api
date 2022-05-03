@@ -1,4 +1,4 @@
-import { JiraApi } from "./JiraApi";
+import { AtlassianRequest } from "atlassian-request";
 import { JiraCrudType } from "./JiraCrudType";
 // import fs from "fs";
 //todo implement hook compatibility and follow proposed pattern of CrudType
@@ -14,7 +14,7 @@ export class Avatar extends JiraCrudType {
 
   load = async () => {
     // let filestream = fs.createReadStream(this.filePath);
-    let response = await JiraApi(
+    let response = await AtlassianRequest(
       `/rest/api/3/universal_avatar/type/${this.type}/owner/${this.ownerId}/?size=${this.size}`,
       { file: this.filePath },
       "POST",
@@ -28,7 +28,7 @@ export class Avatar extends JiraCrudType {
   delete = async (
     destination = `/rest/atlassian-connect/1/universal_avatar/type/${this.type}/owner/${this.ownerId}/${this.body.id}`
   ) => {
-    this.state = await JiraApi(destination, {}, "DELETE");
+    this.state = await AtlassianRequest(destination, {}, "DELETE");
     return this;
   };
 }

@@ -1,5 +1,5 @@
 import { JiraCrudType } from "./JiraCrudType";
-import { JiraApi, encodeObject } from "./JiraApi";
+import { AtlassianRequest, encodeObject } from "atlassian-request";
 
 interface UserSearchResult {
   self: string;
@@ -57,13 +57,13 @@ export class User extends JiraCrudType {
           accountId: string; // A query string that is matched exactly against a user accountId. Required, unless query or property is specified. Max length: 128
         }
   ) {
-    return (await JiraApi<UserSearchResult[]>(`/rest/api/3/user?${encodeObject(body)}`)).body;
+    return (await AtlassianRequest<UserSearchResult[]>(`/rest/api/3/user?${encodeObject(body)}`)).body;
   }
 
   static async getUser(body: {
     accountId: string; // A query string that is matched exactly against a user accountId. Required, unless query or property is specified. Max length: 128
   }) {
-    return (await JiraApi<UserSearchResult>(`/rest/api/3/user?${encodeObject(body)}`)).body;
+    return (await AtlassianRequest<UserSearchResult>(`/rest/api/3/user?${encodeObject(body)}`)).body;
   }
 
   static async findUsersAssignableToProjects(
@@ -72,7 +72,7 @@ export class User extends JiraCrudType {
       | { accountId?: string }
     )
   ) {
-    return (await JiraApi<UserSearchResult[]>(`/user/assignable/multiProjectSearch?${encodeObject(body)}`)).body;
+    return (await AtlassianRequest<UserSearchResult[]>(`/user/assignable/multiProjectSearch?${encodeObject(body)}`)).body;
   }
 
   static async findUsersAssignableToIssues(
@@ -95,6 +95,6 @@ export class User extends JiraCrudType {
       excludeAccounts?: string[];
     } & ({ query: string } | { accountId: string })
   ) {
-    return (await JiraApi<UserPickerSearchResult>(`/rest/api/3/user/picker?${encodeObject(body)}`)).body;
+    return (await AtlassianRequest<UserPickerSearchResult>(`/rest/api/3/user/picker?${encodeObject(body)}`)).body;
   }
 }

@@ -1,5 +1,5 @@
-import { PageBean } from "JiraApi";
-import { JiraApi } from "./JiraApi";
+import { PageBean } from "atlassian-request";
+import { AtlassianRequest } from "atlassian-request";
 import { JiraCrudType } from "./JiraCrudType";
 import { ScreenTab } from "./ScreenTab";
 
@@ -126,7 +126,7 @@ export class Screen extends JiraCrudType<ScreenDetails, ScreenCreateRequest> {
   async readByName(name: string) {
     this.status = "pending";
     let getPage = (startAt = 0) =>
-      JiraApi<PageBean<ScreenDetails>>(this._defaultRestAddress + `?startAt=${startAt}`).then(({ body }) => body);
+      AtlassianRequest<PageBean<ScreenDetails>>(this._defaultRestAddress + `?startAt=${startAt}`).then(({ body }) => body);
     let page = await getPage();
     let screen = page.values.find((v) => v.name === name);
     while (!screen && !page.isLast) {
@@ -145,7 +145,7 @@ export class Screen extends JiraCrudType<ScreenDetails, ScreenCreateRequest> {
   }
 
   static async deleteAllUnused() {
-    let page = await JiraApi<PageBean<ScreenDetails>>(`/rest/api/3/screens?expand=screenScheme`).then(
+    let page = await AtlassianRequest<PageBean<ScreenDetails>>(`/rest/api/3/screens?expand=screenScheme`).then(
       ({ body }) => body
     );
     let promises: Promise<any>[] = [];
@@ -159,7 +159,7 @@ export class Screen extends JiraCrudType<ScreenDetails, ScreenCreateRequest> {
     );
     while (page.nextPage) {
       console.log(page);
-      page = await JiraApi<PageBean<ScreenDetails>>(page.nextPage).then(({ body }) => body);
+      page = await AtlassianRequest<PageBean<ScreenDetails>>(page.nextPage).then(({ body }) => body);
       page.values.map(
         (screen) =>
           screen.screenSchemes ||

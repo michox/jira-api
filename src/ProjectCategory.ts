@@ -1,4 +1,4 @@
-import {JiraApi} from "./JiraApi";
+import {AtlassianRequest} from "atlassian-request";
 import {JiraCrudType} from "./JiraCrudType";
 
 export interface ProjectCategoryCreateRequest {
@@ -26,7 +26,7 @@ export class ProjectCategory extends JiraCrudType<ProjectCategoryDetails, Projec
   }
 
   async readByName(name: string) {
-    let response = await JiraApi<ProjectCategoryDetails[]>(this._defaultRestAddress);
+    let response = await AtlassianRequest<ProjectCategoryDetails[]>(this._defaultRestAddress);
     let allCategories = response.body;
     let result = allCategories.find((c) => c.name === name);
     console.log(result);

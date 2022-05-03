@@ -1,4 +1,4 @@
-import { JiraApi } from "JiraApi/JiraApi";
+import { AtlassianRequest, CrudState } from "atlassian-request";
 import { Fields, IssueBean } from "./Issue";
 
 export interface JQLRequest {
@@ -25,6 +25,10 @@ export type JQLExpand =
 export interface JQLSearchResult {
   expand: string;
   startAt: number;
+  /** set maxResults to -1 to iteratively make requests and obtain all issues until all issues are retrieved 
+   * or until the server failed to respond 5 times which may happen for very large samples. Try to limit the scope 
+   * of your JQL search if that happens or set a lower maxResults value
+   */
   maxResults: number;
   total: number;
   issues: IssueBean[];
@@ -47,10 +51,37 @@ interface Names {
   status: string;
 }
 
-
-export async function JQL(props: JQLRequest | string) {
-    if (typeof props === 'string') {
-        return JiraApi<JQLSearchResult>(`/rest/api/3/search`, {jql:props}, "POST");
+export async function JQL(props: JQLRequest | string): Promise<CrudState<JQLSearchResult>> {
+  if (typeof props === "string") {
+    return AtlassianRequest<JQLSearchResult>(`/rest/api/3/search`, { jql: props }, "POST");
+  } else if (props.maxResults && (props.maxResults > 100 || props.maxResults < 0)) {
+    let maxResults = props.maxResults === -1 ? Number.MAX_SAFE_INTEGER : props.maxResults;
+    let firstPage = await JQL({ ...props, maxResults: 100 });
+    if (firstPage.body.total > 100) {
+      let numberOfRequests = Math.min(Math.ceil(firstPage.body.total / 100), props.maxResults);
+      let requests = Array<Promise<CrudState<JQLSearchResult>>>();
+      for (let i = 1; i < numberOfRequests; i++) {
+        requests.push(JQL({ ...props, maxResults: 100, startAt: i * 100 }));
+      }
+      let remainingPages = await Promise.all(requests);
+      let retryCount = 0;
+      while (remainingPages.filter((page) => page.error).length && retryCount++ < 5) {
+        await Promise.all(
+          (remainingPages = await Promise.all(
+            remainingPages.map(async (req, index) => {
+              if (req.error) req = await JQL({ ...props, maxResults: 100, startAt: (index + 1) * 100 });
+              return req;
+            })
+          ))
+        ); //retry if there is an error at any of the requests which might happen if too many requests are done at the same times
+      }
+      if (retryCount) {
+        firstPage.error={errors:remainingPages.filter((page) => page.error).map(page=>page.error),
+          errorMessages:['the server failed to respond to some requests and not all issues may be returned']}
+      }
+      firstPage.body.issues.push(...remainingPages.map((page) => page.body.issues).flat());
+      return firstPage;
     }
-  return JiraApi<JQLSearchResult>(`/rest/api/3/search`, props, "POST");
+  }
+  return AtlassianRequest<JQLSearchResult>(`/rest/api/3/search`, props, "POST");
 }

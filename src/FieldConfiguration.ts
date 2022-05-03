@@ -1,5 +1,5 @@
-import { PageBean } from "JiraApi";
-import {JiraApi} from "./JiraApi";
+import { PageBean } from "atlassian-request";
+import {AtlassianRequest} from "atlassian-request";
 import {JiraCrudType} from "./JiraCrudType";
 
 export interface FieldConfigurationCreateRequest {
@@ -44,7 +44,7 @@ export class FieldConfiguration extends JiraCrudType<
   }
 
   async updateFieldConfigurationItems(configuration: FieldConfigurationItem[]) {
-    await JiraApi(
+    await AtlassianRequest(
       `${this._defaultRestAddress}/${this.body.id}/fields`,
       { fieldConfigurationItems: configuration },
       "PUT"
@@ -57,7 +57,7 @@ export class FieldConfiguration extends JiraCrudType<
       
     }
     let getPage = async (startAt = 0) => {
-      return JiraApi<PageBean<FieldConfigurationItem>>(
+      return AtlassianRequest<PageBean<FieldConfigurationItem>>(
         `${this._defaultRestAddress}/${this.body.id}/fields?maxResults=1000&startAt=${startAt}`
       ).then((response) => response.body);
     };
@@ -76,12 +76,12 @@ export class FieldConfiguration extends JiraCrudType<
   }
 
   async getMapping() {
-    return JiraApi(`/rest/api/3/fieldconfigurationscheme/mapping`);
+    return AtlassianRequest(`/rest/api/3/fieldconfigurationscheme/mapping`);
   }
 
   static async deleteAllUnused() {
     let getPage = async (startAt = 0) => {
-      return JiraApi<PageBean<{ id: number }>>(`/rest/api/3/fieldconfiguration?startAt=` + startAt).then(
+      return AtlassianRequest<PageBean<{ id: number }>>(`/rest/api/3/fieldconfiguration?startAt=` + startAt).then(
         ({ body }) => body
       );
     };

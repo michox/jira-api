@@ -1,6 +1,6 @@
 import {JiraCrudType} from "./JiraCrudType";
-import {JiraApi} from "./JiraApi";
-import { PageBean } from "JiraApi";
+import {AtlassianRequest} from "atlassian-request";
+import { PageBean } from "atlassian-request";
 
 export interface IssueTypeSchemeCreateRequest {
   name: string;
@@ -19,7 +19,7 @@ export class IssueTypeScheme extends JiraCrudType<IssueTypeSchemeDetails, IssueT
     super(`/rest/api/3/issuetypescheme`);
   }
   static async getSchemesForProject(projectId: string | number) {
-    return (await JiraApi(`/rest/api/3/issuetypescheme/project?projectId=${projectId}`)).body;
+    return (await AtlassianRequest(`/rest/api/3/issuetypescheme/project?projectId=${projectId}`)).body;
   }
   // static async getItems(){}
   // async removeIssueTypes(){}
@@ -34,7 +34,7 @@ export class IssueTypeScheme extends JiraCrudType<IssueTypeSchemeDetails, IssueT
 
   static async deleteAllUnused() {
     let getPage = async (startAt = 0) => {
-      return JiraApi<PageBean<{id: number, projects:PageBean<{id: number}>}>>(
+      return AtlassianRequest<PageBean<{id: number, projects:PageBean<{id: number}>}>>(
         `/rest/api/3/issuetypescheme?expand=projects&startAt=` + startAt
       ).then(({ body }) => body);
     };

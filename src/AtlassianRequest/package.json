@@ -1,9 +1,9 @@
 {
-  "name": "jiraapi",
+  "name": "atlassian-request",
   "version": "0.1.0",
   "description": "Used to map different request methods to a common pattern",
-  "main": "JiraApi.ts",
-  "browser":"JiraApi.browser.ts",
+  "main": "AtlassianRequest.ts",
+  "browser":"AtlassianRequest.browser.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

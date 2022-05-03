@@ -1,7 +1,7 @@
 {
-  "name": "jira-classes",
+  "name": "atlassian-api",
   "version": "0.2.14",
-  "description": "A library to provide Typescript interfaces for the Jira API and the React Framework. Currently only supports Connect Modules (browser and ACE provided that AP or an httpClient are defined) but Forge API could be enabled in the future. This is a total work in progress without documentation and primarily here for personal use! However, contributions are welcome.",
+  "description": "A library to provide Typescript interfaces for the Jira and Confluence API and the React Framework. Currently only supports Connect Modules (browser and ACE provided that AP or an httpClient are defined) but Forge API could be enabled in the future. This is a total work in progress without documentation and primarily here for personal use! However, contributions are welcome.",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,7 +15,7 @@
       "isLibrary": true,
       "optimize": true,
       "includeNodeModules": [
-        "jiraapi"
+        "atlassian-api"
       ]
     },
     "browser": {
@@ -23,7 +23,7 @@
       "isLibrary": true,
       "optimize": true,
       "includeNodeModules": [
-        "jiraapi"
+        "atlassian-api"
       ]
     }
   },
@@ -33,7 +33,7 @@
     "build": "parcel build"
   },
   "keywords": [
-    "jira"
+    "jira", "confluence", "atlassian"
   ],
   "author": "michox",
   "license": "ISC",
@@ -41,8 +41,9 @@
     "@atlaskit/adf-utils": "^16.0.0",
     "@atlaskit/panel": "^0.4.7",
     "@atlaskit/section-message": "^6.1.8",
-    "JiraApi": "file:src/JiraApi",
+    "atlassian-request": "file:src/AtlassianRequest",
     "react": "^16.8.0",
+    "react-intl": "^5.25.0",
     "react-query": "^3.34.16",
     "regenerator-runtime": "^0.13.9",
     "request": "^2.88.2",

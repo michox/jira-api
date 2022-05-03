@@ -1,6 +1,6 @@
 import {JiraCrudType} from "./JiraCrudType";
 import {Avatar} from "./Avatar";
-import {JiraApi} from "./JiraApi";
+import {AtlassianRequest} from "atlassian-request";
 
 interface BriefAvatar {
   path: string;
@@ -74,7 +74,7 @@ export class IssueType extends JiraCrudType<IssueTypeDetails, IssueTypeCreateReq
   }
 
   static async readAll() {
-    IssueType.allIssueTypes = (await JiraApi<IssueTypeDetails[]>(`/rest/api/3/issuetype`)).body;
+    IssueType.allIssueTypes = (await AtlassianRequest<IssueTypeDetails[]>(`/rest/api/3/issuetype`)).body;
     return this;
   }
   private static allIssueTypes: IssueTypeDetails[] | undefined;

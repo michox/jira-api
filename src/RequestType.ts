@@ -1,8 +1,8 @@
 import { FieldConfiguration, FieldConfigurationItem } from "./FieldConfiguration";
 import { Project } from "./Project";
-import { JiraApi } from "./JiraApi";
+import { AtlassianRequest } from "atlassian-request";
 import { JiraCrudType } from "./JiraCrudType";
-import { PageBean } from "JiraApi";
+import { PageBean } from "atlassian-request";
 import { FieldConfigurationScheme } from "./FieldConfigurationScheme";
 import { ServiceDesk } from "./ServiceDesk";
 import { CustomField } from "./CustomField";
@@ -93,12 +93,12 @@ export class RequestType extends JiraCrudType<RequestTypeDetails, RequestTypeCre
   async create({ projectKey, fieldItems, ...body }: RequestTypeCreateRequest): Promise<this> {
     if (fieldItems?.length) {
       this.createWithFieldConfig({ projectKey, fieldItems, ...body });
-    } else this.state = await JiraApi(this._defaultRestAddress, body, "POST", undefined, { experimental: true });
+    } else this.state = await AtlassianRequest(this._defaultRestAddress, body, "POST", undefined, { experimental: true });
     return this;
   }
 
   async delete() {
-    this.state = await JiraApi(`${this._defaultRestAddress}/${this.body.id}`, {}, "DELETE", undefined, {
+    this.state = await AtlassianRequest(`${this._defaultRestAddress}/${this.body.id}`, {}, "DELETE", undefined, {
       experimental: true,
     });
     return this;
@@ -107,7 +107,7 @@ export class RequestType extends JiraCrudType<RequestTypeDetails, RequestTypeCre
   //PRIVATE API. Only usable with basic auth and a suitable user, user impersonation does not seem to work
   async setGroups(groupIds: string[]): Promise<this> {
     (
-      await JiraApi(
+      await AtlassianRequest(
         `/rest/servicedesk/1/servicedesk/${this.body.serviceDeskId}/request-types/${this.body.id}/groups`,
         { groupIds },
         "PUT"
@@ -141,7 +141,7 @@ export class RequestType extends JiraCrudType<RequestTypeDetails, RequestTypeCre
 
       await fieldConfig.updateFieldConfigurationItems(requiredFieldMap(fieldItems));
 
-      this.state = await JiraApi(this._defaultRestAddress, body, "POST", undefined, { experimental: true });
+      this.state = await AtlassianRequest(this._defaultRestAddress, body, "POST", undefined, { experimental: true });
 
       await fieldConfig.updateFieldConfigurationItems(unrequiredFieldMap(fieldItems));
 
@@ -171,7 +171,7 @@ export class RequestType extends JiraCrudType<RequestTypeDetails, RequestTypeCre
       searchQuery = `query=${searchQuery}`;
     }
     return (
-      await JiraApi<PageBean<RequestTypeDetails>>(
+      await AtlassianRequest<PageBean<RequestTypeDetails>>(
         `/rest/servicedeskapi/requesttype${serviceDeskQuery}${searchQuery}&limit=1000`,
         undefined,
         "GET",

@@ -1,5 +1,5 @@
 import {JiraCrudType} from "./JiraCrudType";
-import {JiraApi} from "./JiraApi";
+import {AtlassianRequest} from "atlassian-request";
 
 export interface QueueCreateRequest {
   name: string;
@@ -36,7 +36,7 @@ export class Queue extends JiraCrudType<QueueDetails, QueueCreateRequest> {
   // }
   
   // async delete(deleteAddress: string = `/rest/servicedesk/1/servicedesk/REC/queues`): Promise<this> {
-  //   this.state = await JiraApi(deleteAddress, { deleted: [this.body.id] }, "PUT");
+  //   this.state = await AtlassianRequest(deleteAddress, { deleted: [this.body.id] }, "PUT");
   //   return this;
   // }
 }

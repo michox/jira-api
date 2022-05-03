@@ -1,5 +1,5 @@
 // import React, { useCallback } from "react";
-import { CrudType, JiraApi } from "JiraApi";
+import { CrudType, AtlassianRequest } from "atlassian-request";
 // import { useFlags } from "@atlaskit/flag";
 // import { CreateFlagArgs, DismissFn } from "@atlaskit/flag";
 // import ErrorFlag from "components/flags/ErrorFlag";
@@ -28,7 +28,7 @@ export class JiraCrudType<BodyType = any, RequestType = any> extends CrudType<Bo
     body: string | {} | undefined,
     method: "POST" | "PUT" | "GET" | "DELETE"
   ) {
-    return JiraApi(destination, body, method);
+    return AtlassianRequest(destination, body, method);
   }
 
   protected handleErrorMessage(error: { errorMessages: string[]; errors?: any }) {

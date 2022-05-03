@@ -1,4 +1,4 @@
-import { JiraApi } from "./JiraApi";
+import { AtlassianRequest } from "atlassian-request";
 import { JiraCrudType } from "./JiraCrudType";
 import { ScreenTabField, ScreenTabFieldDetails } from "./ScreenTabField";
 
@@ -61,16 +61,16 @@ export class ScreenTab extends JiraCrudType<ScreenTabDetails, ScreenTabCreateReq
   }
 
   async move(pos: number): Promise<this> {
-    await JiraApi(this._defaultRestAddress + "/move/" + pos, {}, "POST");
+    await AtlassianRequest(this._defaultRestAddress + "/move/" + pos, {}, "POST");
     return this;
   }
 
   static async readAll(screenId: string | number): Promise<{ id: number; name: string }[]> {
-    return (await JiraApi<{ id: number; name: string }[]>(`/rest/api/3/screens/${screenId}/tabs`)).body;
+    return (await AtlassianRequest<{ id: number; name: string }[]>(`/rest/api/3/screens/${screenId}/tabs`)).body;
   }
 
   async readByName(name: string) {
-    let allTabs = (await JiraApi<{ id: number; name: string }[]>(this._defaultRestAddress)).body;
+    let allTabs = (await AtlassianRequest<{ id: number; name: string }[]>(this._defaultRestAddress)).body;
     let thisTab = allTabs.find((t) => t.name === name);
     if (thisTab) this.body = { ...this.body, ...thisTab };
     return this;
@@ -128,7 +128,7 @@ export class ScreenTab extends JiraCrudType<ScreenTabDetails, ScreenTabCreateReq
   }
 
   async getAllFields() {
-    return JiraApi<ScreenTabFieldDetails[]>(`/rest/api/3/screens/${this.body.screenId}/tabs/${this.body.id}/fields`);
+    return AtlassianRequest<ScreenTabFieldDetails[]>(`/rest/api/3/screens/${this.body.screenId}/tabs/${this.body.id}/fields`);
   }
 
   private async reorderFields(fields: ScreenTabField[] = this.body.fields) {
